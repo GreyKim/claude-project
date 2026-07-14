@@ -1,9 +1,14 @@
 """
 군집/집계 파이프라인.
 
-중요: 이 스크립트는 masked_complaints.json만 읽는다 (raw_complaints.json은 절대 입력으로 쓰지 않는다).
-실제 서비스에서 이 단계가 LLM 호출(임베딩/요약/군집 태깅)로 대체되더라도, LLM에는 마스킹된
-데이터만 전달된다는 원칙을 코드 구조로 강제하기 위함이다.
+중요: 군집/집계(분석) 로직은 masked_complaints.json만 읽는다 (raw_complaints.json은 절대
+입력으로 쓰지 않는다). 실제 서비스에서 이 단계가 LLM 호출(임베딩/요약/군집 태깅)로 대체되더라도,
+LLM에는 마스킹된 데이터만 전달된다는 원칙을 코드 구조로 강제하기 위함이다.
+
+예외: build_masking_comparisons()만 raw_complaints.json을 읽는다. 이는 분석 파이프라인이 아니라
+"마스킹이 제대로 됐는지 검수"하기 위한 감사(audit) 목적 전용 함수이며, 대시보드에서도 기본적으로
+값이 가려진 채로 노출되고 명시적으로 펼쳐야만 보이도록 처리한다 (실제 운영에서는 권한 있는
+검수자만 접근 가능해야 하는 화면이라는 의도).
 
 sklearn 등 외부 의존성 없이 순수 파이썬 키워드 매칭으로 카테고리 내 세부 군집(subcluster)을
 나누는 경량 버전이다. 실제 서비스로 확장 시 이 부분만 임베딩+KMeans 등으로 교체하면 된다.
@@ -12,10 +17,12 @@ import json
 from collections import Counter, defaultdict
 from datetime import datetime
 
+RAW_PATH = "/Users/1109701/workspace/study/claude-project/data/raw_complaints.json"
 MASKED_PATH = "/Users/1109701/workspace/study/claude-project/data/masked_complaints.json"
 AUDIT_PATH = "/Users/1109701/workspace/study/claude-project/data/masking_audit.json"
 SAMPLE_PATH = "/Users/1109701/workspace/study/claude-project/data/masking_sample.json"
 OUT_PATH = "/Users/1109701/workspace/study/claude-project/data/dashboard_data.json"
+COMPARISON_ROWS = 15
 
 # 카테고리별 세부 군집 키워드 사전 (마스킹된 텍스트에서도 유지되는 일반 단어 기준)
 SUBCLUSTER_KEYWORDS = {
@@ -62,6 +69,29 @@ def assign_subcluster(category: str, text: str) -> str:
         if any(kw in text for kw in keywords):
             return label
     return "기타"
+
+
+def build_masking_comparisons(masked_records):
+    """검수용 원본↔마스킹 비교 테이블. 최근 티켓 기준 상위 COMPARISON_ROWS건만 노출한다."""
+    with open(RAW_PATH, encoding="utf-8") as f:
+        raw_records = json.load(f)
+    raw_by_id = {r["ticket_id"]: r for r in raw_records}
+
+    fields = ("customer_name", "phone", "imei", "imsi", "complaint_text")
+    recent = sorted(masked_records, key=lambda r: r["created_at"], reverse=True)[:COMPARISON_ROWS]
+
+    comparisons = []
+    for m in recent:
+        raw = raw_by_id[m["ticket_id"]]
+        comparisons.append(
+            {
+                "ticket_id": m["ticket_id"],
+                "category": m["category"],
+                "before": {k: raw[k] for k in fields},
+                "after": {k: m[k] for k in fields},
+            }
+        )
+    return comparisons
 
 
 def build_dashboard_data():
@@ -137,6 +167,7 @@ def build_dashboard_data():
         "weekly_trend": weekly_trend,
         "recent_tickets": sorted(records, key=lambda r: r["created_at"], reverse=True)[:20],
         "masking_sample": masking_sample,
+        "masking_comparisons": build_masking_comparisons(records),
     }
 
     with open(OUT_PATH, "w", encoding="utf-8") as f:

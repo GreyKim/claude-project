@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-14 15:39",
+  "generated_at": "2026-07-14 15:57",
   "kpi": {
     "total_tickets": 150,
     "open_tickets": 57,
@@ -900,5 +900,277 @@
       "imsi": "[IMSI_00ee2621]",
       "complaint_text": "상담원 연결까지 40분 이상 대기했습니다. 응대 개선 요청드립니다. [NAME_4adbe5a7] / [PHONE_f23472df]."
     }
-  }
+  },
+  "masking_comparisons": [
+    {
+      "ticket_id": "TCK-00115",
+      "category": "명의도용/보안",
+      "before": {
+        "customer_name": "이유빈",
+        "phone": "010-4946-6421",
+        "imei": "408386631779717",
+        "imsi": "450065170166088",
+        "complaint_text": "제 명의로 모르는 회선이 추가 개통된 것을 발견했습니다. 즉시 확인 부탁드립니다. 이유빈, 010-4946-6421."
+      },
+      "after": {
+        "customer_name": "[NAME_1af25b74]",
+        "phone": "[PHONE_9a58657d]",
+        "imei": "[IMEI_3b973281]",
+        "imsi": "[IMSI_a799fae2]",
+        "complaint_text": "제 명의로 모르는 회선이 추가 개통된 것을 발견했습니다. 즉시 확인 부탁드립니다. [NAME_1af25b74], [PHONE_9a58657d]."
+      }
+    },
+    {
+      "ticket_id": "TCK-00086",
+      "category": "단말기불량",
+      "before": {
+        "customer_name": "조도은",
+        "phone": "010-5059-5537",
+        "imei": "138999404389836",
+        "imsi": "450080376137918",
+        "complaint_text": "배터리가 비정상적으로 빨리 닳습니다. 조도은 고객이며 단말기 IMEI는 138999404389836입니다."
+      },
+      "after": {
+        "customer_name": "[NAME_fa615a0c]",
+        "phone": "[PHONE_9df8c660]",
+        "imei": "[IMEI_75eed908]",
+        "imsi": "[IMSI_f923c413]",
+        "complaint_text": "배터리가 비정상적으로 빨리 닳습니다. [NAME_fa615a0c] 고객이며 단말기 IMEI는 138999404389836입니다."
+      }
+    },
+    {
+      "ticket_id": "TCK-00144",
+      "category": "고객센터응대",
+      "before": {
+        "customer_name": "정하아",
+        "phone": "010-2121-3988",
+        "imei": "241797497350208",
+        "imsi": "450052144270312",
+        "complaint_text": "상담원의 설명이 안내마다 달라서 혼란스럽습니다. 010-2121-3988로 콜백 요청합니다."
+      },
+      "after": {
+        "customer_name": "[NAME_d8dc9c23]",
+        "phone": "[PHONE_91511c69]",
+        "imei": "[IMEI_fe7a2884]",
+        "imsi": "[IMSI_0929842c]",
+        "complaint_text": "상담원의 설명이 안내마다 달라서 혼란스럽습니다. [PHONE_91511c69]로 콜백 요청합니다."
+      }
+    },
+    {
+      "ticket_id": "TCK-00126",
+      "category": "요금청구",
+      "before": {
+        "customer_name": "임도빈",
+        "phone": "010-8017-3762",
+        "imei": "053364525777547",
+        "imsi": "450052914283411",
+        "complaint_text": "부가서비스를 해지했는데 계속 청구되고 있어요. 고객명 임도빈, 연락처 010-8017-3762."
+      },
+      "after": {
+        "customer_name": "[NAME_2aaddbbb]",
+        "phone": "[PHONE_6ebf58ea]",
+        "imei": "[IMEI_210753df]",
+        "imsi": "[IMSI_fc709611]",
+        "complaint_text": "부가서비스를 해지했는데 계속 청구되고 있어요. 고객명 [NAME_2aaddbbb], 연락처 [PHONE_6ebf58ea]."
+      }
+    },
+    {
+      "ticket_id": "TCK-00110",
+      "category": "요금청구",
+      "before": {
+        "customer_name": "강예은",
+        "phone": "010-2682-7284",
+        "imei": "894210447898562",
+        "imsi": "450087532603323",
+        "complaint_text": "이번 달 요금이 평소보다 3만원 더 청구됐습니다. 강예은입니다, 010-2682-7284로 확인 연락 주세요."
+      },
+      "after": {
+        "customer_name": "[NAME_174666fc]",
+        "phone": "[PHONE_e6639960]",
+        "imei": "[IMEI_ab22f415]",
+        "imsi": "[IMSI_d96800bc]",
+        "complaint_text": "이번 달 요금이 평소보다 3만원 더 청구됐습니다. [NAME_174666fc]입니다, [PHONE_e6639960]로 확인 연락 주세요."
+      }
+    },
+    {
+      "ticket_id": "TCK-00051",
+      "category": "데이터속도저하",
+      "before": {
+        "customer_name": "정예진",
+        "phone": "010-4515-5678",
+        "imei": "731217271551884",
+        "imsi": "450082258313237",
+        "complaint_text": "매일 저녁 7~9시 사이에 데이터 속도가 급격히 느려집니다. IMSI 450082258313237 회선입니다."
+      },
+      "after": {
+        "customer_name": "[NAME_2992fbb3]",
+        "phone": "[PHONE_5cbb196f]",
+        "imei": "[IMEI_c1d4ed14]",
+        "imsi": "[IMSI_d7aa9448]",
+        "complaint_text": "매일 저녁 7~9시 사이에 데이터 속도가 급격히 느려집니다. IMSI [IMSI_d7aa9448] 회선입니다."
+      }
+    },
+    {
+      "ticket_id": "TCK-00148",
+      "category": "개통/해지",
+      "before": {
+        "customer_name": "강유준",
+        "phone": "010-9289-7210",
+        "imei": "209593518638782",
+        "imsi": "450085651181022",
+        "complaint_text": "명의변경 절차가 안내와 다르게 진행됐습니다. 010-9289-7210로 다시 연락 주세요."
+      },
+      "after": {
+        "customer_name": "[NAME_608934a9]",
+        "phone": "[PHONE_f2f08a5e]",
+        "imei": "[IMEI_9e96cdd9]",
+        "imsi": "[IMSI_3e9d2103]",
+        "complaint_text": "명의변경 절차가 안내와 다르게 진행됐습니다. [PHONE_f2f08a5e]로 다시 연락 주세요."
+      }
+    },
+    {
+      "ticket_id": "TCK-00021",
+      "category": "데이터속도저하",
+      "before": {
+        "customer_name": "강유훈",
+        "phone": "010-6023-5118",
+        "imei": "313518233749894",
+        "imsi": "450053435240824",
+        "complaint_text": "테더링 시 속도 제한이 안내보다 빨리 걸립니다. 강유훈, 010-6023-5118로 연락 바랍니다."
+      },
+      "after": {
+        "customer_name": "[NAME_1cbd2a9f]",
+        "phone": "[PHONE_cad5cace]",
+        "imei": "[IMEI_96586a77]",
+        "imsi": "[IMSI_964e4b76]",
+        "complaint_text": "테더링 시 속도 제한이 안내보다 빨리 걸립니다. [NAME_1cbd2a9f], [PHONE_cad5cace]로 연락 바랍니다."
+      }
+    },
+    {
+      "ticket_id": "TCK-00071",
+      "category": "개통/해지",
+      "before": {
+        "customer_name": "이도율",
+        "phone": "010-8520-4984",
+        "imei": "341016668700217",
+        "imsi": "450065918033974",
+        "complaint_text": "해지 신청 후에도 요금이 계속 청구됩니다. 가입자식별번호 450065918033974 입니다."
+      },
+      "after": {
+        "customer_name": "[NAME_04da28f4]",
+        "phone": "[PHONE_7a7535ed]",
+        "imei": "[IMEI_160b501e]",
+        "imsi": "[IMSI_ff05f7d4]",
+        "complaint_text": "해지 신청 후에도 요금이 계속 청구됩니다. 가입자식별번호 [IMSI_ff05f7d4] 입니다."
+      }
+    },
+    {
+      "ticket_id": "TCK-00092",
+      "category": "명의도용/보안",
+      "before": {
+        "customer_name": "조도빈",
+        "phone": "010-8417-5455",
+        "imei": "313291212775618",
+        "imsi": "450083747411249",
+        "complaint_text": "본인인증 없이 유심이 재발급된 정황이 있습니다. IMSI 450083747411249 확인 요청합니다."
+      },
+      "after": {
+        "customer_name": "[NAME_d326586c]",
+        "phone": "[PHONE_761e0e4c]",
+        "imei": "[IMEI_6f835aec]",
+        "imsi": "[IMSI_5d77ce46]",
+        "complaint_text": "본인인증 없이 유심이 재발급된 정황이 있습니다. IMSI [IMSI_5d77ce46] 확인 요청합니다."
+      }
+    },
+    {
+      "ticket_id": "TCK-00123",
+      "category": "고객센터응대",
+      "before": {
+        "customer_name": "조서은",
+        "phone": "010-1389-8523",
+        "imei": "501102481934667",
+        "imsi": "450066506180919",
+        "complaint_text": "상담원의 설명이 안내마다 달라서 혼란스럽습니다. 010-1389-8523로 콜백 요청합니다."
+      },
+      "after": {
+        "customer_name": "[NAME_781a6a41]",
+        "phone": "[PHONE_907a6809]",
+        "imei": "[IMEI_9f01074d]",
+        "imsi": "[IMSI_fd12fb64]",
+        "complaint_text": "상담원의 설명이 안내마다 달라서 혼란스럽습니다. [PHONE_907a6809]로 콜백 요청합니다."
+      }
+    },
+    {
+      "ticket_id": "TCK-00112",
+      "category": "데이터속도저하",
+      "before": {
+        "customer_name": "정성아",
+        "phone": "010-6864-7713",
+        "imei": "420873753001197",
+        "imsi": "450021811437447",
+        "complaint_text": "매일 저녁 7~9시 사이에 데이터 속도가 급격히 느려집니다. IMSI 450021811437447 회선입니다."
+      },
+      "after": {
+        "customer_name": "[NAME_1195d4c4]",
+        "phone": "[PHONE_8aa3bb47]",
+        "imei": "[IMEI_ee044014]",
+        "imsi": "[IMSI_19c767fa]",
+        "complaint_text": "매일 저녁 7~9시 사이에 데이터 속도가 급격히 느려집니다. IMSI [IMSI_19c767fa] 회선입니다."
+      }
+    },
+    {
+      "ticket_id": "TCK-00104",
+      "category": "명의도용/보안",
+      "before": {
+        "customer_name": "이현은",
+        "phone": "010-5923-8259",
+        "imei": "546913736785082",
+        "imsi": "450054862890233",
+        "complaint_text": "본인인증 없이 유심이 재발급된 정황이 있습니다. IMSI 450054862890233 확인 요청합니다."
+      },
+      "after": {
+        "customer_name": "[NAME_e9d29d4a]",
+        "phone": "[PHONE_f51e4fb4]",
+        "imei": "[IMEI_d340d078]",
+        "imsi": "[IMSI_c9141d0c]",
+        "complaint_text": "본인인증 없이 유심이 재발급된 정황이 있습니다. IMSI [IMSI_c9141d0c] 확인 요청합니다."
+      }
+    },
+    {
+      "ticket_id": "TCK-00046",
+      "category": "개통/해지",
+      "before": {
+        "customer_name": "김도우",
+        "phone": "010-6493-3392",
+        "imei": "204727790104328",
+        "imsi": "450061434103697",
+        "complaint_text": "온라인으로 신청한 개통이 3일째 지연되고 있습니다. 김도우 / 010-6493-3392 확인 부탁드립니다."
+      },
+      "after": {
+        "customer_name": "[NAME_ece98fb4]",
+        "phone": "[PHONE_f06b340d]",
+        "imei": "[IMEI_1ae44b02]",
+        "imsi": "[IMSI_7f36d342]",
+        "complaint_text": "온라인으로 신청한 개통이 3일째 지연되고 있습니다. [NAME_ece98fb4] / [PHONE_f06b340d] 확인 부탁드립니다."
+      }
+    },
+    {
+      "ticket_id": "TCK-00093",
+      "category": "고객센터응대",
+      "before": {
+        "customer_name": "강하원",
+        "phone": "010-1802-5896",
+        "imei": "420678831712100",
+        "imsi": "450022365199410",
+        "complaint_text": "상담원 연결까지 40분 이상 대기했습니다. 응대 개선 요청드립니다. 강하원 / 010-1802-5896."
+      },
+      "after": {
+        "customer_name": "[NAME_b5b5e449]",
+        "phone": "[PHONE_b291e08d]",
+        "imei": "[IMEI_66064a77]",
+        "imsi": "[IMSI_27a7dd2e]",
+        "complaint_text": "상담원 연결까지 40분 이상 대기했습니다. 응대 개선 요청드립니다. [NAME_b5b5e449] / [PHONE_b291e08d]."
+      }
+    }
+  ]
 }

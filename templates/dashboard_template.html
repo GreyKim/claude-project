@@ -147,6 +147,10 @@
   .mask-box .k { color: var(--text-muted); font-size: 11px; display: block; }
 
   footer.note { font-size: 11.5px; color: var(--text-muted); margin-top: 8px; }
+
+  #comparisonTable .before-col { display: none; }
+  #comparisonTable.revealed .before-col { display: table-cell; }
+  #comparisonTable .before-val { color: var(--status-critical); }
 </style>
 
 <div class="viz-root">
@@ -220,6 +224,22 @@
       </div>
     </div>
     <footer class="note">동일 고객의 값은 항상 동일한 토큰으로 치환되어(HMAC 기반 결정적 가명처리), 원본 식별정보 없이도 반복 문의 고객 파악 등 분석이 가능합니다.</footer>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>마스킹 검수 테이블 (원본 ↔ 마스킹 비교)</h2>
+        <p class="sub">최근 15건 · 마스킹이 제대로 적용됐는지 원본과 나란히 검증하기 위한 화면입니다</p>
+      </div>
+      <button class="toggle-btn" id="revealToggle" type="button">🔒 원본 표시</button>
+    </div>
+    <div class="pii-banner" style="border-left-color: var(--status-critical); margin-bottom:14px;">
+      ⚠️ <span>아래 <b>Before</b> 열은 실제 서비스라면 검수 권한이 있는 사용자만 열람할 수 있어야 합니다. 지금은 전부 테스트용 가상 데이터입니다.</span>
+    </div>
+    <div style="overflow-x:auto;">
+      <table id="comparisonTable"></table>
+    </div>
   </div>
 
   <div class="panel">
@@ -424,6 +444,38 @@ function renderMaskingSample() {
   document.getElementById("maskAfter").innerHTML = renderBox(s.after, true);
 }
 
+function renderComparisonTable() {
+  const rows = DATA.masking_comparisons;
+  const fieldLabels = { customer_name: "고객명", phone: "연락처", imei: "IMEI", imsi: "IMSI", complaint_text: "민원 내용" };
+  const fieldKeys = Object.keys(fieldLabels);
+  const table = document.getElementById("comparisonTable");
+
+  table.innerHTML = `
+    <thead>
+      <tr>
+        <th>티켓ID</th>
+        <th>카테고리</th>
+        ${fieldKeys.map(k => `<th class="before-col">${fieldLabels[k]} (Before)</th><th>${fieldLabels[k]} (After)</th>`).join("")}
+      </tr>
+    </thead>
+    <tbody>${rows.map(r => `
+      <tr>
+        <td class="mono strong">${esc(r.ticket_id)}</td>
+        <td>${esc(r.category)}</td>
+        ${fieldKeys.map(k => `
+          <td class="mono before-col before-val">${esc(r.before[k])}</td>
+          <td class="mono">${highlightPii(r.after[k])}</td>
+        `).join("")}
+      </tr>`).join("")}</tbody>
+  `;
+
+  const toggle = document.getElementById("revealToggle");
+  toggle.addEventListener("click", () => {
+    const revealed = table.classList.toggle("revealed");
+    toggle.textContent = revealed ? "🔓 원본 숨기기" : "🔒 원본 표시";
+  });
+}
+
 function renderRecentTable() {
   const rows = DATA.recent_tickets;
   const table = document.getElementById("recentTable");
@@ -463,6 +515,7 @@ renderSeverityChart();
 renderTrend();
 renderClusterTable();
 renderMaskingSample();
+renderComparisonTable();
 renderRecentTable();
 initTheme();
 </script>
