@@ -1,0 +1,904 @@
+{
+  "generated_at": "2026-07-14 15:39",
+  "kpi": {
+    "total_tickets": 150,
+    "open_tickets": 57,
+    "urgent_open": 4,
+    "repeat_customers": 10,
+    "pii_fields_masked": 949,
+    "avg_pii_per_ticket": 6.33
+  },
+  "by_category": [
+    {
+      "name": "데이터속도저하",
+      "count": 30
+    },
+    {
+      "name": "명의도용/보안",
+      "count": 28
+    },
+    {
+      "name": "고객센터응대",
+      "count": 26
+    },
+    {
+      "name": "요금청구",
+      "count": 22
+    },
+    {
+      "name": "단말기불량",
+      "count": 16
+    },
+    {
+      "name": "개통/해지",
+      "count": 14
+    },
+    {
+      "name": "네트워크장애",
+      "count": 14
+    }
+  ],
+  "by_status": [
+    {
+      "name": "접수",
+      "count": 18
+    },
+    {
+      "name": "처리중",
+      "count": 36
+    },
+    {
+      "name": "완료",
+      "count": 93
+    },
+    {
+      "name": "보류",
+      "count": 3
+    }
+  ],
+  "by_severity": [
+    {
+      "name": "낮음",
+      "count": 45
+    },
+    {
+      "name": "높음",
+      "count": 34
+    },
+    {
+      "name": "긴급",
+      "count": 14
+    },
+    {
+      "name": "보통",
+      "count": 57
+    }
+  ],
+  "by_channel": [
+    {
+      "name": "이메일",
+      "count": 43
+    },
+    {
+      "name": "SNS",
+      "count": 30
+    },
+    {
+      "name": "콜센터",
+      "count": 29
+    },
+    {
+      "name": "매장방문",
+      "count": 25
+    },
+    {
+      "name": "앱채팅",
+      "count": 23
+    }
+  ],
+  "clusters": [
+    {
+      "category": "데이터속도저하",
+      "cluster": "피크타임 속도저하",
+      "count": 30,
+      "urgent_count": 3,
+      "example_text": "매일 저녁 7~9시 사이에 데이터 속도가 급격히 느려집니다. IMSI [IMSI_79229cf1] 회선입니다."
+    },
+    {
+      "category": "요금청구",
+      "cluster": "과금 오류",
+      "count": 22,
+      "urgent_count": 3,
+      "example_text": "부가서비스를 해지했는데 계속 청구되고 있어요. 고객명 [NAME_ca0f3059], 연락처 [PHONE_c65e89a9]."
+    },
+    {
+      "category": "고객센터응대",
+      "cluster": "상담이력 미공유",
+      "count": 14,
+      "urgent_count": 1,
+      "example_text": "이전 상담 내용이 기록에 전혀 남아있지 않아 같은 설명을 반복했습니다."
+    },
+    {
+      "category": "고객센터응대",
+      "cluster": "장시간 대기",
+      "count": 12,
+      "urgent_count": 0,
+      "example_text": "상담원 연결까지 40분 이상 대기했습니다. 응대 개선 요청드립니다. [NAME_4adbe5a7] / [PHONE_f23472df]."
+    },
+    {
+      "category": "명의도용/보안",
+      "cluster": "미인지 회선개통",
+      "count": 10,
+      "urgent_count": 1,
+      "example_text": "제 명의로 모르는 회선이 추가 개통된 것을 발견했습니다. 즉시 확인 부탁드립니다. [NAME_a0370be6], [PHONE_44c34be6]."
+    },
+    {
+      "category": "명의도용/보안",
+      "cluster": "유심 무단재발급",
+      "count": 9,
+      "urgent_count": 2,
+      "example_text": "본인인증 없이 유심이 재발급된 정황이 있습니다. IMSI [IMSI_6f4bc2e3] 확인 요청합니다."
+    },
+    {
+      "category": "개통/해지",
+      "cluster": "명의변경 오류",
+      "count": 9,
+      "urgent_count": 1,
+      "example_text": "명의변경 절차가 안내와 다르게 진행됐습니다. [PHONE_cc7b66a9]로 다시 연락 주세요."
+    },
+    {
+      "category": "명의도용/보안",
+      "cluster": "계정 무단접근",
+      "count": 9,
+      "urgent_count": 2,
+      "example_text": "타인이 제 계정으로 로그인한 이력이 있습니다. 보안 조치 부탁드립니다."
+    },
+    {
+      "category": "단말기불량",
+      "cluster": "재부팅/발열",
+      "count": 9,
+      "urgent_count": 0,
+      "example_text": "구매한 지 한 달도 안 된 단말기가 자꾸 재부팅됩니다. IMEI [IMEI_5a70b39a], 연락처 [PHONE_f289da69]."
+    },
+    {
+      "category": "단말기불량",
+      "cluster": "배터리 이슈",
+      "count": 7,
+      "urgent_count": 1,
+      "example_text": "배터리가 비정상적으로 빨리 닳습니다. [NAME_c55400b3] 고객이며 단말기 IMEI는 056413953767242입니다."
+    },
+    {
+      "category": "네트워크장애",
+      "cluster": "5G 신호 불량",
+      "count": 5,
+      "urgent_count": 0,
+      "example_text": "[NAME_cc41c717] [NAME_77bb4923]님 댁 주소 인근에서 어제 저녁부터 5G 신호가 전혀 안 잡힙니다. 연락처 [PHONE_b9ce9622]로 회신 부탁드립니다."
+    },
+    {
+      "category": "네트워크장애",
+      "cluster": "LTE 전환 문제",
+      "count": 5,
+      "urgent_count": 0,
+      "example_text": "실외에서도 LTE가 3G로 자꾸 전환됩니다. 가입자 [IMSI_ebe1148a] 회선입니다."
+    },
+    {
+      "category": "네트워크장애",
+      "cluster": "통화 품질/끊김",
+      "count": 4,
+      "urgent_count": 0,
+      "example_text": "강남 지역 기지국 장애로 통화 끊김이 반복됩니다. IMEI [IMEI_b0228f38] 단말기에서 계속 재현됩니다."
+    },
+    {
+      "category": "개통/해지",
+      "cluster": "해지 후 재청구",
+      "count": 3,
+      "urgent_count": 0,
+      "example_text": "해지 신청 후에도 요금이 계속 청구됩니다. 가입자식별번호 [IMSI_ff05f7d4] 입니다."
+    },
+    {
+      "category": "개통/해지",
+      "cluster": "개통 지연",
+      "count": 2,
+      "urgent_count": 0,
+      "example_text": "온라인으로 신청한 개통이 3일째 지연되고 있습니다. [NAME_4d693789] / [PHONE_dcb7679d] 확인 부탁드립니다."
+    }
+  ],
+  "daily_trend": [
+    {
+      "date": "2026-04-15",
+      "count": 1
+    },
+    {
+      "date": "2026-04-17",
+      "count": 4
+    },
+    {
+      "date": "2026-04-18",
+      "count": 2
+    },
+    {
+      "date": "2026-04-19",
+      "count": 3
+    },
+    {
+      "date": "2026-04-20",
+      "count": 1
+    },
+    {
+      "date": "2026-04-21",
+      "count": 1
+    },
+    {
+      "date": "2026-04-22",
+      "count": 4
+    },
+    {
+      "date": "2026-04-24",
+      "count": 1
+    },
+    {
+      "date": "2026-04-26",
+      "count": 3
+    },
+    {
+      "date": "2026-04-27",
+      "count": 1
+    },
+    {
+      "date": "2026-04-28",
+      "count": 2
+    },
+    {
+      "date": "2026-04-29",
+      "count": 2
+    },
+    {
+      "date": "2026-04-30",
+      "count": 2
+    },
+    {
+      "date": "2026-05-01",
+      "count": 1
+    },
+    {
+      "date": "2026-05-02",
+      "count": 2
+    },
+    {
+      "date": "2026-05-03",
+      "count": 1
+    },
+    {
+      "date": "2026-05-05",
+      "count": 1
+    },
+    {
+      "date": "2026-05-06",
+      "count": 2
+    },
+    {
+      "date": "2026-05-08",
+      "count": 1
+    },
+    {
+      "date": "2026-05-09",
+      "count": 1
+    },
+    {
+      "date": "2026-05-10",
+      "count": 2
+    },
+    {
+      "date": "2026-05-12",
+      "count": 2
+    },
+    {
+      "date": "2026-05-13",
+      "count": 1
+    },
+    {
+      "date": "2026-05-14",
+      "count": 4
+    },
+    {
+      "date": "2026-05-15",
+      "count": 2
+    },
+    {
+      "date": "2026-05-17",
+      "count": 1
+    },
+    {
+      "date": "2026-05-18",
+      "count": 2
+    },
+    {
+      "date": "2026-05-19",
+      "count": 2
+    },
+    {
+      "date": "2026-05-20",
+      "count": 2
+    },
+    {
+      "date": "2026-05-21",
+      "count": 3
+    },
+    {
+      "date": "2026-05-22",
+      "count": 1
+    },
+    {
+      "date": "2026-05-23",
+      "count": 1
+    },
+    {
+      "date": "2026-05-24",
+      "count": 1
+    },
+    {
+      "date": "2026-05-25",
+      "count": 2
+    },
+    {
+      "date": "2026-05-26",
+      "count": 4
+    },
+    {
+      "date": "2026-05-27",
+      "count": 1
+    },
+    {
+      "date": "2026-05-28",
+      "count": 2
+    },
+    {
+      "date": "2026-05-29",
+      "count": 1
+    },
+    {
+      "date": "2026-05-30",
+      "count": 2
+    },
+    {
+      "date": "2026-06-01",
+      "count": 3
+    },
+    {
+      "date": "2026-06-02",
+      "count": 5
+    },
+    {
+      "date": "2026-06-03",
+      "count": 3
+    },
+    {
+      "date": "2026-06-04",
+      "count": 1
+    },
+    {
+      "date": "2026-06-06",
+      "count": 2
+    },
+    {
+      "date": "2026-06-07",
+      "count": 1
+    },
+    {
+      "date": "2026-06-08",
+      "count": 1
+    },
+    {
+      "date": "2026-06-09",
+      "count": 3
+    },
+    {
+      "date": "2026-06-10",
+      "count": 1
+    },
+    {
+      "date": "2026-06-11",
+      "count": 2
+    },
+    {
+      "date": "2026-06-12",
+      "count": 2
+    },
+    {
+      "date": "2026-06-13",
+      "count": 4
+    },
+    {
+      "date": "2026-06-14",
+      "count": 1
+    },
+    {
+      "date": "2026-06-15",
+      "count": 2
+    },
+    {
+      "date": "2026-06-16",
+      "count": 1
+    },
+    {
+      "date": "2026-06-17",
+      "count": 3
+    },
+    {
+      "date": "2026-06-18",
+      "count": 2
+    },
+    {
+      "date": "2026-06-19",
+      "count": 2
+    },
+    {
+      "date": "2026-06-20",
+      "count": 1
+    },
+    {
+      "date": "2026-06-21",
+      "count": 1
+    },
+    {
+      "date": "2026-06-22",
+      "count": 1
+    },
+    {
+      "date": "2026-06-23",
+      "count": 1
+    },
+    {
+      "date": "2026-06-24",
+      "count": 1
+    },
+    {
+      "date": "2026-06-25",
+      "count": 2
+    },
+    {
+      "date": "2026-06-26",
+      "count": 1
+    },
+    {
+      "date": "2026-06-27",
+      "count": 1
+    },
+    {
+      "date": "2026-06-28",
+      "count": 3
+    },
+    {
+      "date": "2026-06-30",
+      "count": 1
+    },
+    {
+      "date": "2026-07-01",
+      "count": 2
+    },
+    {
+      "date": "2026-07-02",
+      "count": 3
+    },
+    {
+      "date": "2026-07-03",
+      "count": 2
+    },
+    {
+      "date": "2026-07-04",
+      "count": 3
+    },
+    {
+      "date": "2026-07-05",
+      "count": 3
+    },
+    {
+      "date": "2026-07-06",
+      "count": 1
+    },
+    {
+      "date": "2026-07-07",
+      "count": 1
+    },
+    {
+      "date": "2026-07-08",
+      "count": 4
+    },
+    {
+      "date": "2026-07-09",
+      "count": 1
+    },
+    {
+      "date": "2026-07-10",
+      "count": 1
+    },
+    {
+      "date": "2026-07-11",
+      "count": 2
+    },
+    {
+      "date": "2026-07-12",
+      "count": 2
+    },
+    {
+      "date": "2026-07-13",
+      "count": 1
+    }
+  ],
+  "weekly_trend": [
+    {
+      "week": "2026-W16",
+      "count": 10
+    },
+    {
+      "week": "2026-W17",
+      "count": 10
+    },
+    {
+      "week": "2026-W18",
+      "count": 11
+    },
+    {
+      "week": "2026-W19",
+      "count": 7
+    },
+    {
+      "week": "2026-W20",
+      "count": 10
+    },
+    {
+      "week": "2026-W21",
+      "count": 12
+    },
+    {
+      "week": "2026-W22",
+      "count": 12
+    },
+    {
+      "week": "2026-W23",
+      "count": 15
+    },
+    {
+      "week": "2026-W24",
+      "count": 14
+    },
+    {
+      "week": "2026-W25",
+      "count": 12
+    },
+    {
+      "week": "2026-W26",
+      "count": 10
+    },
+    {
+      "week": "2026-W27",
+      "count": 14
+    },
+    {
+      "week": "2026-W28",
+      "count": 12
+    },
+    {
+      "week": "2026-W29",
+      "count": 1
+    }
+  ],
+  "recent_tickets": [
+    {
+      "ticket_id": "TCK-00115",
+      "created_at": "2026-07-13 22:00",
+      "category": "명의도용/보안",
+      "channel": "SNS",
+      "severity": "보통",
+      "status": "완료",
+      "customer_id": "[CUSTID_ef833ba3]",
+      "customer_name": "[NAME_1af25b74]",
+      "phone": "[PHONE_9a58657d]",
+      "imei": "[IMEI_3b973281]",
+      "imsi": "[IMSI_a799fae2]",
+      "complaint_text": "제 명의로 모르는 회선이 추가 개통된 것을 발견했습니다. 즉시 확인 부탁드립니다. [NAME_1af25b74], [PHONE_9a58657d].",
+      "cluster": "미인지 회선개통"
+    },
+    {
+      "ticket_id": "TCK-00086",
+      "created_at": "2026-07-12 13:00",
+      "category": "단말기불량",
+      "channel": "앱채팅",
+      "severity": "보통",
+      "status": "완료",
+      "customer_id": "[CUSTID_344335d7]",
+      "customer_name": "[NAME_fa615a0c]",
+      "phone": "[PHONE_9df8c660]",
+      "imei": "[IMEI_75eed908]",
+      "imsi": "[IMSI_f923c413]",
+      "complaint_text": "배터리가 비정상적으로 빨리 닳습니다. [NAME_fa615a0c] 고객이며 단말기 IMEI는 138999404389836입니다.",
+      "cluster": "배터리 이슈"
+    },
+    {
+      "ticket_id": "TCK-00144",
+      "created_at": "2026-07-12 09:00",
+      "category": "고객센터응대",
+      "channel": "이메일",
+      "severity": "보통",
+      "status": "처리중",
+      "customer_id": "[CUSTID_f9145549]",
+      "customer_name": "[NAME_d8dc9c23]",
+      "phone": "[PHONE_91511c69]",
+      "imei": "[IMEI_fe7a2884]",
+      "imsi": "[IMSI_0929842c]",
+      "complaint_text": "상담원의 설명이 안내마다 달라서 혼란스럽습니다. [PHONE_91511c69]로 콜백 요청합니다.",
+      "cluster": "상담이력 미공유"
+    },
+    {
+      "ticket_id": "TCK-00126",
+      "created_at": "2026-07-11 08:00",
+      "category": "요금청구",
+      "channel": "SNS",
+      "severity": "보통",
+      "status": "완료",
+      "customer_id": "[CUSTID_5e08c90d]",
+      "customer_name": "[NAME_2aaddbbb]",
+      "phone": "[PHONE_6ebf58ea]",
+      "imei": "[IMEI_210753df]",
+      "imsi": "[IMSI_fc709611]",
+      "complaint_text": "부가서비스를 해지했는데 계속 청구되고 있어요. 고객명 [NAME_2aaddbbb], 연락처 [PHONE_6ebf58ea].",
+      "cluster": "과금 오류"
+    },
+    {
+      "ticket_id": "TCK-00110",
+      "created_at": "2026-07-11 06:00",
+      "category": "요금청구",
+      "channel": "콜센터",
+      "severity": "보통",
+      "status": "완료",
+      "customer_id": "[CUSTID_5463d0ff]",
+      "customer_name": "[NAME_174666fc]",
+      "phone": "[PHONE_e6639960]",
+      "imei": "[IMEI_ab22f415]",
+      "imsi": "[IMSI_d96800bc]",
+      "complaint_text": "이번 달 요금이 평소보다 3만원 더 청구됐습니다. [NAME_174666fc]입니다, [PHONE_e6639960]로 확인 연락 주세요.",
+      "cluster": "과금 오류"
+    },
+    {
+      "ticket_id": "TCK-00051",
+      "created_at": "2026-07-10 13:00",
+      "category": "데이터속도저하",
+      "channel": "매장방문",
+      "severity": "보통",
+      "status": "완료",
+      "customer_id": "[CUSTID_0495862d]",
+      "customer_name": "[NAME_2992fbb3]",
+      "phone": "[PHONE_5cbb196f]",
+      "imei": "[IMEI_c1d4ed14]",
+      "imsi": "[IMSI_d7aa9448]",
+      "complaint_text": "매일 저녁 7~9시 사이에 데이터 속도가 급격히 느려집니다. IMSI [IMSI_d7aa9448] 회선입니다.",
+      "cluster": "피크타임 속도저하"
+    },
+    {
+      "ticket_id": "TCK-00148",
+      "created_at": "2026-07-09 18:00",
+      "category": "개통/해지",
+      "channel": "앱채팅",
+      "severity": "낮음",
+      "status": "접수",
+      "customer_id": "[CUSTID_d4162760]",
+      "customer_name": "[NAME_608934a9]",
+      "phone": "[PHONE_f2f08a5e]",
+      "imei": "[IMEI_9e96cdd9]",
+      "imsi": "[IMSI_3e9d2103]",
+      "complaint_text": "명의변경 절차가 안내와 다르게 진행됐습니다. [PHONE_f2f08a5e]로 다시 연락 주세요.",
+      "cluster": "명의변경 오류"
+    },
+    {
+      "ticket_id": "TCK-00021",
+      "created_at": "2026-07-08 23:00",
+      "category": "데이터속도저하",
+      "channel": "앱채팅",
+      "severity": "보통",
+      "status": "완료",
+      "customer_id": "[CUSTID_0a4f114e]",
+      "customer_name": "[NAME_1cbd2a9f]",
+      "phone": "[PHONE_cad5cace]",
+      "imei": "[IMEI_96586a77]",
+      "imsi": "[IMSI_964e4b76]",
+      "complaint_text": "테더링 시 속도 제한이 안내보다 빨리 걸립니다. [NAME_1cbd2a9f], [PHONE_cad5cace]로 연락 바랍니다.",
+      "cluster": "피크타임 속도저하"
+    },
+    {
+      "ticket_id": "TCK-00071",
+      "created_at": "2026-07-08 22:00",
+      "category": "개통/해지",
+      "channel": "매장방문",
+      "severity": "높음",
+      "status": "완료",
+      "customer_id": "[CUSTID_f3a8598e]",
+      "customer_name": "[NAME_04da28f4]",
+      "phone": "[PHONE_7a7535ed]",
+      "imei": "[IMEI_160b501e]",
+      "imsi": "[IMSI_ff05f7d4]",
+      "complaint_text": "해지 신청 후에도 요금이 계속 청구됩니다. 가입자식별번호 [IMSI_ff05f7d4] 입니다.",
+      "cluster": "해지 후 재청구"
+    },
+    {
+      "ticket_id": "TCK-00092",
+      "created_at": "2026-07-08 18:00",
+      "category": "명의도용/보안",
+      "channel": "매장방문",
+      "severity": "낮음",
+      "status": "완료",
+      "customer_id": "[CUSTID_ee672f6c]",
+      "customer_name": "[NAME_d326586c]",
+      "phone": "[PHONE_761e0e4c]",
+      "imei": "[IMEI_6f835aec]",
+      "imsi": "[IMSI_5d77ce46]",
+      "complaint_text": "본인인증 없이 유심이 재발급된 정황이 있습니다. IMSI [IMSI_5d77ce46] 확인 요청합니다.",
+      "cluster": "유심 무단재발급"
+    },
+    {
+      "ticket_id": "TCK-00123",
+      "created_at": "2026-07-08 02:00",
+      "category": "고객센터응대",
+      "channel": "매장방문",
+      "severity": "긴급",
+      "status": "완료",
+      "customer_id": "[CUSTID_a0d076ed]",
+      "customer_name": "[NAME_781a6a41]",
+      "phone": "[PHONE_907a6809]",
+      "imei": "[IMEI_9f01074d]",
+      "imsi": "[IMSI_fd12fb64]",
+      "complaint_text": "상담원의 설명이 안내마다 달라서 혼란스럽습니다. [PHONE_907a6809]로 콜백 요청합니다.",
+      "cluster": "상담이력 미공유"
+    },
+    {
+      "ticket_id": "TCK-00112",
+      "created_at": "2026-07-07 21:00",
+      "category": "데이터속도저하",
+      "channel": "콜센터",
+      "severity": "높음",
+      "status": "완료",
+      "customer_id": "[CUSTID_9d67c8ff]",
+      "customer_name": "[NAME_1195d4c4]",
+      "phone": "[PHONE_8aa3bb47]",
+      "imei": "[IMEI_ee044014]",
+      "imsi": "[IMSI_19c767fa]",
+      "complaint_text": "매일 저녁 7~9시 사이에 데이터 속도가 급격히 느려집니다. IMSI [IMSI_19c767fa] 회선입니다.",
+      "cluster": "피크타임 속도저하"
+    },
+    {
+      "ticket_id": "TCK-00104",
+      "created_at": "2026-07-06 17:00",
+      "category": "명의도용/보안",
+      "channel": "콜센터",
+      "severity": "높음",
+      "status": "접수",
+      "customer_id": "[CUSTID_61e3b633]",
+      "customer_name": "[NAME_e9d29d4a]",
+      "phone": "[PHONE_f51e4fb4]",
+      "imei": "[IMEI_d340d078]",
+      "imsi": "[IMSI_c9141d0c]",
+      "complaint_text": "본인인증 없이 유심이 재발급된 정황이 있습니다. IMSI [IMSI_c9141d0c] 확인 요청합니다.",
+      "cluster": "유심 무단재발급"
+    },
+    {
+      "ticket_id": "TCK-00046",
+      "created_at": "2026-07-05 21:00",
+      "category": "개통/해지",
+      "channel": "이메일",
+      "severity": "보통",
+      "status": "완료",
+      "customer_id": "[CUSTID_4b4428cd]",
+      "customer_name": "[NAME_ece98fb4]",
+      "phone": "[PHONE_f06b340d]",
+      "imei": "[IMEI_1ae44b02]",
+      "imsi": "[IMSI_7f36d342]",
+      "complaint_text": "온라인으로 신청한 개통이 3일째 지연되고 있습니다. [NAME_ece98fb4] / [PHONE_f06b340d] 확인 부탁드립니다.",
+      "cluster": "개통 지연"
+    },
+    {
+      "ticket_id": "TCK-00093",
+      "created_at": "2026-07-05 18:00",
+      "category": "고객센터응대",
+      "channel": "이메일",
+      "severity": "높음",
+      "status": "완료",
+      "customer_id": "[CUSTID_666c18d0]",
+      "customer_name": "[NAME_b5b5e449]",
+      "phone": "[PHONE_b291e08d]",
+      "imei": "[IMEI_66064a77]",
+      "imsi": "[IMSI_27a7dd2e]",
+      "complaint_text": "상담원 연결까지 40분 이상 대기했습니다. 응대 개선 요청드립니다. [NAME_b5b5e449] / [PHONE_b291e08d].",
+      "cluster": "장시간 대기"
+    },
+    {
+      "ticket_id": "TCK-00130",
+      "created_at": "2026-07-05 17:00",
+      "category": "데이터속도저하",
+      "channel": "앱채팅",
+      "severity": "낮음",
+      "status": "처리중",
+      "customer_id": "[CUSTID_fca4fb17]",
+      "customer_name": "[NAME_45690a89]",
+      "phone": "[PHONE_c92a28de]",
+      "imei": "[IMEI_a1d4143f]",
+      "imsi": "[IMSI_3c25d766]",
+      "complaint_text": "매일 저녁 7~9시 사이에 데이터 속도가 급격히 느려집니다. IMSI [IMSI_3c25d766] 회선입니다.",
+      "cluster": "피크타임 속도저하"
+    },
+    {
+      "ticket_id": "TCK-00084",
+      "created_at": "2026-07-04 20:00",
+      "category": "명의도용/보안",
+      "channel": "SNS",
+      "severity": "보통",
+      "status": "완료",
+      "customer_id": "[CUSTID_18b6d771]",
+      "customer_name": "[NAME_52eff745]",
+      "phone": "[PHONE_cad7ef8a]",
+      "imei": "[IMEI_8e72de76]",
+      "imsi": "[IMSI_2876cb49]",
+      "complaint_text": "제 명의로 모르는 회선이 추가 개통된 것을 발견했습니다. 즉시 확인 부탁드립니다. [NAME_52eff745], [PHONE_cad7ef8a].",
+      "cluster": "미인지 회선개통"
+    },
+    {
+      "ticket_id": "TCK-00041",
+      "created_at": "2026-07-04 04:00",
+      "category": "요금청구",
+      "channel": "콜센터",
+      "severity": "보통",
+      "status": "완료",
+      "customer_id": "[CUSTID_adae05cc]",
+      "customer_name": "[NAME_682817a5]",
+      "phone": "[PHONE_6ca0fbc9]",
+      "imei": "[IMEI_175a4510]",
+      "imsi": "[IMSI_e8ce5e38]",
+      "complaint_text": "부가서비스를 해지했는데 계속 청구되고 있어요. 고객명 [NAME_682817a5], 연락처 [PHONE_6ca0fbc9].",
+      "cluster": "과금 오류"
+    },
+    {
+      "ticket_id": "TCK-00010",
+      "created_at": "2026-07-04 02:00",
+      "category": "고객센터응대",
+      "channel": "SNS",
+      "severity": "낮음",
+      "status": "완료",
+      "customer_id": "[CUSTID_dee1647c]",
+      "customer_name": "[NAME_5fd2947d]",
+      "phone": "[PHONE_2809b26c]",
+      "imei": "[IMEI_ff6e00c1]",
+      "imsi": "[IMSI_7878c83d]",
+      "complaint_text": "상담원 연결까지 40분 이상 대기했습니다. 응대 개선 요청드립니다. [NAME_5fd2947d] / [PHONE_2809b26c].",
+      "cluster": "장시간 대기"
+    },
+    {
+      "ticket_id": "TCK-00015",
+      "created_at": "2026-07-03 20:00",
+      "category": "데이터속도저하",
+      "channel": "이메일",
+      "severity": "보통",
+      "status": "처리중",
+      "customer_id": "[CUSTID_249f3bc9]",
+      "customer_name": "[NAME_87fb0b42]",
+      "phone": "[PHONE_ce8e7ef9]",
+      "imei": "[IMEI_4e215d9a]",
+      "imsi": "[IMSI_6b57dbd4]",
+      "complaint_text": "매일 저녁 7~9시 사이에 데이터 속도가 급격히 느려집니다. IMSI [IMSI_6b57dbd4] 회선입니다.",
+      "cluster": "피크타임 속도저하"
+    }
+  ],
+  "masking_sample": {
+    "before": {
+      "customer_name": "김예아",
+      "phone": "010-4657-3286",
+      "imei": "181960013389083",
+      "imsi": "450063794026542",
+      "complaint_text": "상담원 연결까지 40분 이상 대기했습니다. 응대 개선 요청드립니다. 김예아 / 010-4657-3286."
+    },
+    "after": {
+      "customer_name": "[NAME_4adbe5a7]",
+      "phone": "[PHONE_f23472df]",
+      "imei": "[IMEI_dd6fd733]",
+      "imsi": "[IMSI_00ee2621]",
+      "complaint_text": "상담원 연결까지 40분 이상 대기했습니다. 응대 개선 요청드립니다. [NAME_4adbe5a7] / [PHONE_f23472df]."
+    }
+  }
+}

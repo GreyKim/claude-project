@@ -1,0 +1,468 @@
+<title>고객불만·장애 대응 현황 대시보드</title>
+<style>
+  .viz-root {
+    color-scheme: light;
+    --surface-1: #fcfcfb;
+    --page: #f9f9f7;
+    --text-primary: #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted: #898781;
+    --grid: #e1e0d9;
+    --baseline: #c3c2b7;
+    --border: rgba(11,11,11,0.10);
+
+    --cat-1: #2a78d6; --cat-2: #1baf7a; --cat-3: #eda100; --cat-4: #008300;
+    --cat-5: #4a3aa7; --cat-6: #e34948; --cat-7: #e87ba4; --cat-8: #eb6834;
+
+    --status-good: #0ca30c;
+    --status-warning: #fab219;
+    --status-serious: #ec835a;
+    --status-critical: #d03b3b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) .viz-root {
+      color-scheme: dark;
+      --surface-1: #1a1a19;
+      --page: #0d0d0d;
+      --text-primary: #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted: #898781;
+      --grid: #2c2c2a;
+      --baseline: #383835;
+      --border: rgba(255,255,255,0.10);
+
+      --cat-1: #3987e5; --cat-2: #199e70; --cat-3: #c98500; --cat-4: #008300;
+      --cat-5: #9085e9; --cat-6: #e66767; --cat-7: #d55181; --cat-8: #d95926;
+    }
+  }
+  :root[data-theme="dark"] .viz-root {
+    color-scheme: dark;
+    --surface-1: #1a1a19;
+    --page: #0d0d0d;
+    --text-primary: #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted: #898781;
+    --grid: #2c2c2a;
+    --baseline: #383835;
+    --border: rgba(255,255,255,0.10);
+
+    --cat-1: #3987e5; --cat-2: #199e70; --cat-3: #c98500; --cat-4: #008300;
+    --cat-5: #9085e9; --cat-6: #e66767; --cat-7: #d55181; --cat-8: #d95926;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--page);
+    color: var(--text-primary);
+  }
+  .viz-root { max-width: 1180px; margin: 0 auto; padding: 24px 20px 64px; }
+
+  header.top { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+  header.top h1 { font-size: 20px; margin: 0 0 4px; }
+  header.top p { margin: 0; color: var(--text-secondary); font-size: 13px; }
+  .theme-toggle {
+    border: 1px solid var(--border); background: var(--surface-1); color: var(--text-primary);
+    border-radius: 8px; padding: 6px 12px; font-size: 13px; cursor: pointer;
+  }
+
+  .pii-banner {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--surface-1); border: 1px solid var(--border); border-left: 3px solid var(--status-good);
+    border-radius: 10px; padding: 12px 16px; margin-bottom: 20px; font-size: 13px; color: var(--text-secondary);
+  }
+  .pii-banner b { color: var(--text-primary); }
+
+  .kpi-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 24px; }
+  @media (max-width: 900px) { .kpi-row { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 560px) { .kpi-row { grid-template-columns: repeat(2, 1fr); } }
+  .kpi-tile {
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .kpi-tile .label { font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; }
+  .kpi-tile .value { font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .kpi-tile .value.accent-critical { color: var(--status-critical); }
+  .kpi-tile .value.accent-good { color: var(--status-good); }
+
+  .panel {
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px;
+    padding: 18px 20px; margin-bottom: 20px; overflow-x: auto;
+  }
+  .panel h2 { font-size: 15px; margin: 0 0 4px; }
+  .panel .sub { font-size: 12px; color: var(--text-muted); margin: 0 0 14px; }
+  .panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .toggle-btn {
+    font-size: 12px; color: var(--text-secondary); background: transparent; border: 1px solid var(--border);
+    border-radius: 6px; padding: 4px 10px; cursor: pointer;
+  }
+
+  .grid-2 { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; }
+  @media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  .bar-row { display: grid; grid-template-columns: 130px 1fr 46px; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 12.5px; }
+  .bar-row .name { color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar-track { position: relative; height: 14px; background: var(--grid); border-radius: 4px; overflow: hidden; }
+  .bar-fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 4px; }
+  .bar-row .count { text-align: right; font-variant-numeric: tabular-nums; color: var(--text-primary); }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; font-size: 12px; color: var(--text-secondary); }
+  .legend .item { display: flex; align-items: center; gap: 6px; }
+  .swatch { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+
+  .status-stack { display: flex; height: 22px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border); }
+  .status-seg { height: 100%; }
+  .status-legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 12px; }
+  .status-legend .item { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--text-secondary); }
+  .status-legend .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+  .status-legend b { color: var(--text-primary); font-variant-numeric: tabular-nums; }
+
+  svg.line-chart { width: 100%; height: 200px; display: block; overflow: visible; }
+  .lc-tooltip {
+    position: absolute; pointer-events: none; background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 8px; padding: 6px 10px; font-size: 12px; color: var(--text-primary); box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+    transform: translate(-50%, -110%); white-space: nowrap;
+  }
+  .line-wrap { position: relative; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th { text-align: left; color: var(--text-muted); font-weight: 500; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.02em; padding: 6px 10px; border-bottom: 1px solid var(--grid); white-space: nowrap; }
+  td { padding: 8px 10px; border-bottom: 1px solid var(--grid); vertical-align: top; color: var(--text-secondary); }
+  td.strong { color: var(--text-primary); }
+  tr:last-child td { border-bottom: none; }
+  .pill { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+  .pill .dot { width: 6px; height: 6px; border-radius: 50%; }
+  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+  .pii-token {
+    background: color-mix(in srgb, var(--status-critical) 16%, transparent);
+    color: var(--status-critical); border-radius: 4px; padding: 0 3px; font-weight: 600;
+  }
+
+  .mask-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 760px) { .mask-grid { grid-template-columns: 1fr; } }
+  .mask-col h3 { font-size: 12px; margin: 0 0 8px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
+  .mask-box { background: var(--page); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; font-size: 13px; line-height: 1.7; }
+  .mask-box .field { margin-bottom: 6px; }
+  .mask-box .k { color: var(--text-muted); font-size: 11px; display: block; }
+
+  footer.note { font-size: 11.5px; color: var(--text-muted); margin-top: 8px; }
+</style>
+
+<div class="viz-root">
+  <header class="top">
+    <div>
+      <h1>고객불만·장애 대응 현황 대시보드</h1>
+      <p>테스트 데이터 기준 · 생성 시각 <span id="generatedAt"></span></p>
+    </div>
+    <button class="theme-toggle" id="themeToggle" type="button">다크 모드</button>
+  </header>
+
+  <div class="pii-banner">
+    ✅ <span><b>PII 마스킹 파이프라인 적용됨</b> — 성명·연락처·IMEI·IMSI·고객ID는 LLM/군집 분석에 전달되기 전, 가명 토큰으로 결정적 치환됩니다. 원본 식별정보는 이 화면 및 분석 단계 어디에도 노출되지 않습니다.</span>
+  </div>
+
+  <div class="kpi-row" id="kpiRow"></div>
+
+  <div class="grid-2">
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>카테고리별 접수 현황</h2>
+          <p class="sub">전체 티켓 수 기준 분포</p>
+        </div>
+        <button class="toggle-btn" id="catTableToggle" type="button">표로 보기</button>
+      </div>
+      <div id="categoryChart"></div>
+      <div class="legend" id="categoryLegend"></div>
+      <div id="categoryTableWrap" style="display:none; margin-top:14px;"></div>
+    </div>
+
+    <div class="panel">
+      <h2>티켓 상태</h2>
+      <p class="sub">접수 → 처리중 → 완료 / 보류(정체)</p>
+      <div class="status-stack" id="statusStack"></div>
+      <div class="status-legend" id="statusLegend"></div>
+
+      <h2 style="margin-top:22px;">심각도</h2>
+      <p class="sub">낮음 → 긴급</p>
+      <div id="severityChart"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>주간 접수 추이</h2>
+    <p class="sub">최근 90일, 주 단위 집계</p>
+    <div class="line-wrap" id="trendWrap">
+      <svg class="line-chart" id="trendChart"></svg>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>불만/장애 군집 Top 10</h2>
+    <p class="sub">마스킹된 텍스트만으로 카테고리 내 세부 군집을 태깅한 결과 (원본 PII는 이 단계에 전달되지 않음)</p>
+    <div style="overflow-x:auto;">
+      <table id="clusterTable"></table>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>PII 마스킹 전/후 예시</h2>
+    <p class="sub">테스트 데이터 1건 기준 — 구조화 필드와 자유텍스트에 섞인 PII 모두 동일한 가명 토큰으로 치환됩니다.</p>
+    <div class="mask-grid">
+      <div class="mask-col">
+        <h3>Before (원본, LLM 미전달)</h3>
+        <div class="mask-box" id="maskBefore"></div>
+      </div>
+      <div class="mask-col">
+        <h3>After (마스킹 후, LLM 입력)</h3>
+        <div class="mask-box" id="maskAfter"></div>
+      </div>
+    </div>
+    <footer class="note">동일 고객의 값은 항상 동일한 토큰으로 치환되어(HMAC 기반 결정적 가명처리), 원본 식별정보 없이도 반복 문의 고객 파악 등 분석이 가능합니다.</footer>
+  </div>
+
+  <div class="panel">
+    <h2>최근 접수 티켓</h2>
+    <p class="sub">최근 20건 · 표시되는 모든 값은 마스킹된 값입니다</p>
+    <div style="overflow-x:auto;">
+      <table id="recentTable"></table>
+    </div>
+  </div>
+</div>
+
+<script>
+const DATA = __DASHBOARD_DATA_JSON__;
+
+const CATEGORY_COLOR_VAR = {
+  "네트워크장애": "--cat-1",
+  "요금청구": "--cat-2",
+  "개통/해지": "--cat-3",
+  "단말기불량": "--cat-4",
+  "데이터속도저하": "--cat-5",
+  "고객센터응대": "--cat-6",
+  "명의도용/보안": "--cat-7",
+};
+const STATUS_ROLE = { "완료": "good", "처리중": "warning", "접수": "serious", "보류": "critical" };
+const STATUS_ORDER = ["접수", "처리중", "완료", "보류"];
+const SEVERITY_ROLE = { "낮음": "good", "보통": "warning", "높음": "serious", "긴급": "critical" };
+const SEVERITY_ORDER = ["낮음", "보통", "높음", "긴급"];
+const STATUS_LABEL = { good: "양호", warning: "주의", serious: "경고", critical: "심각" };
+
+function cssVar(name) { return getComputedStyle(document.querySelector(".viz-root")).getPropertyValue(name).trim(); }
+function statusColor(role) { return cssVar("--status-" + role); }
+function fmt(n) { return n.toLocaleString("ko-KR"); }
+function esc(s) { return String(s).replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c])); }
+function highlightPii(text) {
+  return esc(text).replace(/\[(NAME|PHONE|IMEI|IMSI|CUSTID)_[0-9a-f]+\]/g, m => `<span class="pii-token">${m}</span>`);
+}
+
+function renderKpis() {
+  const k = DATA.kpi;
+  const tiles = [
+    { label: "총 접수 건수", value: fmt(k.total_tickets) },
+    { label: "미해결", value: fmt(k.open_tickets) },
+    { label: "긴급 · 미해결", value: fmt(k.urgent_open), cls: k.urgent_open > 0 ? "accent-critical" : "" },
+    { label: "반복 문의 고객", value: fmt(k.repeat_customers) },
+    { label: "마스킹된 PII 항목", value: fmt(k.pii_fields_masked), cls: "accent-good" },
+    { label: "건당 평균 PII", value: k.avg_pii_per_ticket },
+  ];
+  document.getElementById("kpiRow").innerHTML = tiles.map(t => `
+    <div class="kpi-tile">
+      <div class="label">${t.label}</div>
+      <div class="value ${t.cls || ""}">${t.value}</div>
+    </div>`).join("");
+  document.getElementById("generatedAt").textContent = DATA.generated_at;
+}
+
+function renderCategoryChart() {
+  const rows = [...DATA.by_category].sort((a, b) => b.count - a.count);
+  const max = Math.max(...rows.map(r => r.count));
+  const el = document.getElementById("categoryChart");
+  el.innerHTML = rows.map(r => {
+    const colorVar = CATEGORY_COLOR_VAR[r.name] || "--cat-8";
+    const pct = (r.count / max * 100).toFixed(1);
+    return `
+      <div class="bar-row">
+        <span class="name">${esc(r.name)}</span>
+        <span class="bar-track"><span class="bar-fill" style="width:${pct}%; background:var(${colorVar});"></span></span>
+        <span class="count">${fmt(r.count)}</span>
+      </div>`;
+  }).join("");
+
+  document.getElementById("categoryLegend").innerHTML = rows.map(r => {
+    const colorVar = CATEGORY_COLOR_VAR[r.name] || "--cat-8";
+    return `<span class="item"><span class="swatch" style="background:var(${colorVar});"></span>${esc(r.name)}</span>`;
+  }).join("");
+
+  const total = rows.reduce((s, r) => s + r.count, 0);
+  const tableWrap = document.getElementById("categoryTableWrap");
+  tableWrap.innerHTML = `<table>
+    <thead><tr><th>카테고리</th><th>건수</th><th>비중</th></tr></thead>
+    <tbody>${rows.map(r => `<tr><td class="strong">${esc(r.name)}</td><td>${fmt(r.count)}</td><td>${(r.count / total * 100).toFixed(1)}%</td></tr>`).join("")}</tbody>
+  </table>`;
+  document.getElementById("catTableToggle").addEventListener("click", () => {
+    const visible = tableWrap.style.display !== "none";
+    tableWrap.style.display = visible ? "none" : "block";
+  });
+}
+
+function renderStatusStack() {
+  const rows = STATUS_ORDER.map(name => DATA.by_status.find(r => r.name === name) || { name, count: 0 });
+  const total = rows.reduce((s, r) => s + r.count, 0);
+  const stack = document.getElementById("statusStack");
+  stack.innerHTML = rows.map(r => {
+    const role = STATUS_ROLE[r.name];
+    const pct = total ? (r.count / total * 100) : 0;
+    return `<span class="status-seg" style="width:${pct}%; background:${statusColor(role)};" title="${r.name} ${r.count}건"></span>`;
+  }).join("");
+
+  document.getElementById("statusLegend").innerHTML = rows.map(r => {
+    const role = STATUS_ROLE[r.name];
+    return `<span class="item"><span class="dot" style="background:${statusColor(role)};"></span>${esc(r.name)} (${STATUS_LABEL[role]}) <b>${fmt(r.count)}</b></span>`;
+  }).join("");
+}
+
+function renderSeverityChart() {
+  const rows = SEVERITY_ORDER.map(name => DATA.by_severity.find(r => r.name === name) || { name, count: 0 });
+  const max = Math.max(...rows.map(r => r.count), 1);
+  const el = document.getElementById("severityChart");
+  el.innerHTML = rows.map(r => {
+    const role = SEVERITY_ROLE[r.name];
+    const pct = (r.count / max * 100).toFixed(1);
+    return `
+      <div class="bar-row">
+        <span class="name">${esc(r.name)}</span>
+        <span class="bar-track"><span class="bar-fill" style="width:${pct}%; background:${statusColor(role)};"></span></span>
+        <span class="count">${fmt(r.count)}</span>
+      </div>`;
+  }).join("");
+}
+
+function renderTrend() {
+  const rows = DATA.weekly_trend;
+  const svg = document.getElementById("trendChart");
+  const wrap = document.getElementById("trendWrap");
+  const W = 1000, H = 200, padL = 30, padR = 10, padT = 14, padB = 26;
+  const max = Math.max(...rows.map(r => r.count), 1);
+  const xStep = (W - padL - padR) / Math.max(rows.length - 1, 1);
+  const x = i => padL + i * xStep;
+  const y = v => padT + (H - padT - padB) * (1 - v / max);
+
+  const gridLines = [0, 0.5, 1].map(f => {
+    const yy = padT + (H - padT - padB) * (1 - f);
+    return `<line x1="${padL}" y1="${yy}" x2="${W - padR}" y2="${yy}" stroke="var(--grid)" stroke-width="1"/>`;
+  }).join("");
+
+  const points = rows.map((r, i) => `${x(i)},${y(r.count)}`).join(" ");
+  const lineColor = cssVar("--cat-1");
+
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.innerHTML = `
+    ${gridLines}
+    <line x1="${padL}" y1="${H - padB}" x2="${W - padR}" y2="${H - padB}" stroke="var(--baseline)" stroke-width="1"/>
+    <polyline points="${points}" fill="none" stroke="${lineColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    ${rows.map((r, i) => `<circle cx="${x(i)}" cy="${y(r.count)}" r="2.5" fill="${lineColor}" data-i="${i}" style="opacity:0"/>`).join("")}
+    <text x="${padL}" y="${H - 8}" font-size="10" fill="var(--text-muted)">${rows[0] ? rows[0].week : ""}</text>
+    <text x="${W - padR}" y="${H - 8}" font-size="10" fill="var(--text-muted)" text-anchor="end">${rows.length ? rows[rows.length - 1].week : ""}</text>
+    <line class="crosshair" x1="0" y1="${padT}" x2="0" y2="${H - padB}" stroke="var(--text-muted)" stroke-width="1" stroke-dasharray="3,3" style="opacity:0"/>
+  `;
+
+  let tooltip = wrap.querySelector(".lc-tooltip");
+  if (!tooltip) {
+    tooltip = document.createElement("div");
+    tooltip.className = "lc-tooltip";
+    tooltip.style.display = "none";
+    wrap.appendChild(tooltip);
+  }
+  const crosshair = svg.querySelector(".crosshair");
+
+  svg.addEventListener("mousemove", (e) => {
+    const rect = svg.getBoundingClientRect();
+    const relX = (e.clientX - rect.left) / rect.width * W;
+    let i = Math.round((relX - padL) / xStep);
+    i = Math.max(0, Math.min(rows.length - 1, i));
+    const r = rows[i];
+    if (!r) return;
+    crosshair.setAttribute("x1", x(i));
+    crosshair.setAttribute("x2", x(i));
+    crosshair.style.opacity = 1;
+    tooltip.style.display = "block";
+    tooltip.style.left = (x(i) / W * rect.width) + "px";
+    tooltip.style.top = (y(r.count) / H * rect.height) + "px";
+    tooltip.innerHTML = `<b>${r.week}</b> · ${fmt(r.count)}건`;
+  });
+  svg.addEventListener("mouseleave", () => {
+    tooltip.style.display = "none";
+    crosshair.style.opacity = 0;
+  });
+}
+
+function renderClusterTable() {
+  const rows = DATA.clusters.slice(0, 10);
+  const table = document.getElementById("clusterTable");
+  table.innerHTML = `
+    <thead><tr><th>카테고리</th><th>세부 군집</th><th>건수</th><th>긴급</th><th>대표 사례 (마스킹됨)</th></tr></thead>
+    <tbody>${rows.map(r => `
+      <tr>
+        <td class="strong">${esc(r.category)}</td>
+        <td>${esc(r.cluster)}</td>
+        <td>${fmt(r.count)}</td>
+        <td>${r.urgent_count > 0 ? `<span class="pill" style="background:color-mix(in srgb, var(--status-critical) 16%, transparent); color:var(--status-critical);"><span class="dot" style="background:var(--status-critical);"></span>${r.urgent_count}</span>` : "-"}</td>
+        <td class="mono">${highlightPii(r.example_text)}</td>
+      </tr>`).join("")}</tbody>
+  `;
+}
+
+function renderMaskingSample() {
+  const s = DATA.masking_sample;
+  const fieldLabels = { customer_name: "고객명", phone: "연락처", imei: "IMEI", imsi: "IMSI", complaint_text: "민원 내용" };
+  const renderBox = (obj, mask) => Object.entries(fieldLabels).map(([k, label]) => `
+    <div class="field"><span class="k">${label}</span>${mask ? highlightPii(obj[k]) : esc(obj[k])}</div>
+  `).join("");
+  document.getElementById("maskBefore").innerHTML = renderBox(s.before, false);
+  document.getElementById("maskAfter").innerHTML = renderBox(s.after, true);
+}
+
+function renderRecentTable() {
+  const rows = DATA.recent_tickets;
+  const table = document.getElementById("recentTable");
+  table.innerHTML = `
+    <thead><tr><th>접수일시</th><th>티켓ID</th><th>카테고리</th><th>군집</th><th>채널</th><th>심각도</th><th>상태</th><th>고객(마스킹)</th></tr></thead>
+    <tbody>${rows.map(r => {
+      const sRole = STATUS_ROLE[r.status];
+      const vRole = SEVERITY_ROLE[r.severity];
+      return `<tr>
+        <td>${esc(r.created_at)}</td>
+        <td class="mono">${esc(r.ticket_id)}</td>
+        <td class="strong">${esc(r.category)}</td>
+        <td>${esc(r.cluster)}</td>
+        <td>${esc(r.channel)}</td>
+        <td><span class="pill" style="background:color-mix(in srgb, ${statusColor(vRole)} 16%, transparent); color:${statusColor(vRole)};"><span class="dot" style="background:${statusColor(vRole)};"></span>${esc(r.severity)}</span></td>
+        <td><span class="pill" style="background:color-mix(in srgb, ${statusColor(sRole)} 16%, transparent); color:${statusColor(sRole)};"><span class="dot" style="background:${statusColor(sRole)};"></span>${esc(r.status)}</span></td>
+        <td class="mono">${highlightPii(r.customer_name)}</td>
+      </tr>`;
+    }).join("")}</tbody>
+  `;
+}
+
+function initTheme() {
+  const btn = document.getElementById("themeToggle");
+  const root = document.documentElement;
+  btn.addEventListener("click", () => {
+    const isDark = root.getAttribute("data-theme") === "dark";
+    root.setAttribute("data-theme", isDark ? "light" : "dark");
+    btn.textContent = isDark ? "다크 모드" : "라이트 모드";
+  });
+}
+
+renderKpis();
+renderCategoryChart();
+renderStatusStack();
+renderSeverityChart();
+renderTrend();
+renderClusterTable();
+renderMaskingSample();
+renderRecentTable();
+initTheme();
+</script>

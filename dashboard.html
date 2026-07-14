@@ -1,0 +1,468 @@
+<title>고객불만·장애 대응 현황 대시보드</title>
+<style>
+  .viz-root {
+    color-scheme: light;
+    --surface-1: #fcfcfb;
+    --page: #f9f9f7;
+    --text-primary: #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted: #898781;
+    --grid: #e1e0d9;
+    --baseline: #c3c2b7;
+    --border: rgba(11,11,11,0.10);
+
+    --cat-1: #2a78d6; --cat-2: #1baf7a; --cat-3: #eda100; --cat-4: #008300;
+    --cat-5: #4a3aa7; --cat-6: #e34948; --cat-7: #e87ba4; --cat-8: #eb6834;
+
+    --status-good: #0ca30c;
+    --status-warning: #fab219;
+    --status-serious: #ec835a;
+    --status-critical: #d03b3b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) .viz-root {
+      color-scheme: dark;
+      --surface-1: #1a1a19;
+      --page: #0d0d0d;
+      --text-primary: #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted: #898781;
+      --grid: #2c2c2a;
+      --baseline: #383835;
+      --border: rgba(255,255,255,0.10);
+
+      --cat-1: #3987e5; --cat-2: #199e70; --cat-3: #c98500; --cat-4: #008300;
+      --cat-5: #9085e9; --cat-6: #e66767; --cat-7: #d55181; --cat-8: #d95926;
+    }
+  }
+  :root[data-theme="dark"] .viz-root {
+    color-scheme: dark;
+    --surface-1: #1a1a19;
+    --page: #0d0d0d;
+    --text-primary: #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted: #898781;
+    --grid: #2c2c2a;
+    --baseline: #383835;
+    --border: rgba(255,255,255,0.10);
+
+    --cat-1: #3987e5; --cat-2: #199e70; --cat-3: #c98500; --cat-4: #008300;
+    --cat-5: #9085e9; --cat-6: #e66767; --cat-7: #d55181; --cat-8: #d95926;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--page);
+    color: var(--text-primary);
+  }
+  .viz-root { max-width: 1180px; margin: 0 auto; padding: 24px 20px 64px; }
+
+  header.top { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+  header.top h1 { font-size: 20px; margin: 0 0 4px; }
+  header.top p { margin: 0; color: var(--text-secondary); font-size: 13px; }
+  .theme-toggle {
+    border: 1px solid var(--border); background: var(--surface-1); color: var(--text-primary);
+    border-radius: 8px; padding: 6px 12px; font-size: 13px; cursor: pointer;
+  }
+
+  .pii-banner {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--surface-1); border: 1px solid var(--border); border-left: 3px solid var(--status-good);
+    border-radius: 10px; padding: 12px 16px; margin-bottom: 20px; font-size: 13px; color: var(--text-secondary);
+  }
+  .pii-banner b { color: var(--text-primary); }
+
+  .kpi-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 24px; }
+  @media (max-width: 900px) { .kpi-row { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 560px) { .kpi-row { grid-template-columns: repeat(2, 1fr); } }
+  .kpi-tile {
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .kpi-tile .label { font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; }
+  .kpi-tile .value { font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .kpi-tile .value.accent-critical { color: var(--status-critical); }
+  .kpi-tile .value.accent-good { color: var(--status-good); }
+
+  .panel {
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px;
+    padding: 18px 20px; margin-bottom: 20px; overflow-x: auto;
+  }
+  .panel h2 { font-size: 15px; margin: 0 0 4px; }
+  .panel .sub { font-size: 12px; color: var(--text-muted); margin: 0 0 14px; }
+  .panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .toggle-btn {
+    font-size: 12px; color: var(--text-secondary); background: transparent; border: 1px solid var(--border);
+    border-radius: 6px; padding: 4px 10px; cursor: pointer;
+  }
+
+  .grid-2 { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; }
+  @media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  .bar-row { display: grid; grid-template-columns: 130px 1fr 46px; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 12.5px; }
+  .bar-row .name { color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar-track { position: relative; height: 14px; background: var(--grid); border-radius: 4px; overflow: hidden; }
+  .bar-fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 4px; }
+  .bar-row .count { text-align: right; font-variant-numeric: tabular-nums; color: var(--text-primary); }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; font-size: 12px; color: var(--text-secondary); }
+  .legend .item { display: flex; align-items: center; gap: 6px; }
+  .swatch { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+
+  .status-stack { display: flex; height: 22px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border); }
+  .status-seg { height: 100%; }
+  .status-legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 12px; }
+  .status-legend .item { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--text-secondary); }
+  .status-legend .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+  .status-legend b { color: var(--text-primary); font-variant-numeric: tabular-nums; }
+
+  svg.line-chart { width: 100%; height: 200px; display: block; overflow: visible; }
+  .lc-tooltip {
+    position: absolute; pointer-events: none; background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 8px; padding: 6px 10px; font-size: 12px; color: var(--text-primary); box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+    transform: translate(-50%, -110%); white-space: nowrap;
+  }
+  .line-wrap { position: relative; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th { text-align: left; color: var(--text-muted); font-weight: 500; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.02em; padding: 6px 10px; border-bottom: 1px solid var(--grid); white-space: nowrap; }
+  td { padding: 8px 10px; border-bottom: 1px solid var(--grid); vertical-align: top; color: var(--text-secondary); }
+  td.strong { color: var(--text-primary); }
+  tr:last-child td { border-bottom: none; }
+  .pill { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+  .pill .dot { width: 6px; height: 6px; border-radius: 50%; }
+  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+  .pii-token {
+    background: color-mix(in srgb, var(--status-critical) 16%, transparent);
+    color: var(--status-critical); border-radius: 4px; padding: 0 3px; font-weight: 600;
+  }
+
+  .mask-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 760px) { .mask-grid { grid-template-columns: 1fr; } }
+  .mask-col h3 { font-size: 12px; margin: 0 0 8px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
+  .mask-box { background: var(--page); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; font-size: 13px; line-height: 1.7; }
+  .mask-box .field { margin-bottom: 6px; }
+  .mask-box .k { color: var(--text-muted); font-size: 11px; display: block; }
+
+  footer.note { font-size: 11.5px; color: var(--text-muted); margin-top: 8px; }
+</style>
+
+<div class="viz-root">
+  <header class="top">
+    <div>
+      <h1>고객불만·장애 대응 현황 대시보드</h1>
+      <p>테스트 데이터 기준 · 생성 시각 <span id="generatedAt"></span></p>
+    </div>
+    <button class="theme-toggle" id="themeToggle" type="button">다크 모드</button>
+  </header>
+
+  <div class="pii-banner">
+    ✅ <span><b>PII 마스킹 파이프라인 적용됨</b> — 성명·연락처·IMEI·IMSI·고객ID는 LLM/군집 분석에 전달되기 전, 가명 토큰으로 결정적 치환됩니다. 원본 식별정보는 이 화면 및 분석 단계 어디에도 노출되지 않습니다.</span>
+  </div>
+
+  <div class="kpi-row" id="kpiRow"></div>
+
+  <div class="grid-2">
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>카테고리별 접수 현황</h2>
+          <p class="sub">전체 티켓 수 기준 분포</p>
+        </div>
+        <button class="toggle-btn" id="catTableToggle" type="button">표로 보기</button>
+      </div>
+      <div id="categoryChart"></div>
+      <div class="legend" id="categoryLegend"></div>
+      <div id="categoryTableWrap" style="display:none; margin-top:14px;"></div>
+    </div>
+
+    <div class="panel">
+      <h2>티켓 상태</h2>
+      <p class="sub">접수 → 처리중 → 완료 / 보류(정체)</p>
+      <div class="status-stack" id="statusStack"></div>
+      <div class="status-legend" id="statusLegend"></div>
+
+      <h2 style="margin-top:22px;">심각도</h2>
+      <p class="sub">낮음 → 긴급</p>
+      <div id="severityChart"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>주간 접수 추이</h2>
+    <p class="sub">최근 90일, 주 단위 집계</p>
+    <div class="line-wrap" id="trendWrap">
+      <svg class="line-chart" id="trendChart"></svg>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>불만/장애 군집 Top 10</h2>
+    <p class="sub">마스킹된 텍스트만으로 카테고리 내 세부 군집을 태깅한 결과 (원본 PII는 이 단계에 전달되지 않음)</p>
+    <div style="overflow-x:auto;">
+      <table id="clusterTable"></table>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>PII 마스킹 전/후 예시</h2>
+    <p class="sub">테스트 데이터 1건 기준 — 구조화 필드와 자유텍스트에 섞인 PII 모두 동일한 가명 토큰으로 치환됩니다.</p>
+    <div class="mask-grid">
+      <div class="mask-col">
+        <h3>Before (원본, LLM 미전달)</h3>
+        <div class="mask-box" id="maskBefore"></div>
+      </div>
+      <div class="mask-col">
+        <h3>After (마스킹 후, LLM 입력)</h3>
+        <div class="mask-box" id="maskAfter"></div>
+      </div>
+    </div>
+    <footer class="note">동일 고객의 값은 항상 동일한 토큰으로 치환되어(HMAC 기반 결정적 가명처리), 원본 식별정보 없이도 반복 문의 고객 파악 등 분석이 가능합니다.</footer>
+  </div>
+
+  <div class="panel">
+    <h2>최근 접수 티켓</h2>
+    <p class="sub">최근 20건 · 표시되는 모든 값은 마스킹된 값입니다</p>
+    <div style="overflow-x:auto;">
+      <table id="recentTable"></table>
+    </div>
+  </div>
+</div>
+
+<script>
+const DATA = {"generated_at": "2026-07-14 15:39", "kpi": {"total_tickets": 150, "open_tickets": 57, "urgent_open": 4, "repeat_customers": 10, "pii_fields_masked": 949, "avg_pii_per_ticket": 6.33}, "by_category": [{"name": "데이터속도저하", "count": 30}, {"name": "명의도용/보안", "count": 28}, {"name": "고객센터응대", "count": 26}, {"name": "요금청구", "count": 22}, {"name": "단말기불량", "count": 16}, {"name": "개통/해지", "count": 14}, {"name": "네트워크장애", "count": 14}], "by_status": [{"name": "접수", "count": 18}, {"name": "처리중", "count": 36}, {"name": "완료", "count": 93}, {"name": "보류", "count": 3}], "by_severity": [{"name": "낮음", "count": 45}, {"name": "높음", "count": 34}, {"name": "긴급", "count": 14}, {"name": "보통", "count": 57}], "by_channel": [{"name": "이메일", "count": 43}, {"name": "SNS", "count": 30}, {"name": "콜센터", "count": 29}, {"name": "매장방문", "count": 25}, {"name": "앱채팅", "count": 23}], "clusters": [{"category": "데이터속도저하", "cluster": "피크타임 속도저하", "count": 30, "urgent_count": 3, "example_text": "매일 저녁 7~9시 사이에 데이터 속도가 급격히 느려집니다. IMSI [IMSI_79229cf1] 회선입니다."}, {"category": "요금청구", "cluster": "과금 오류", "count": 22, "urgent_count": 3, "example_text": "부가서비스를 해지했는데 계속 청구되고 있어요. 고객명 [NAME_ca0f3059], 연락처 [PHONE_c65e89a9]."}, {"category": "고객센터응대", "cluster": "상담이력 미공유", "count": 14, "urgent_count": 1, "example_text": "이전 상담 내용이 기록에 전혀 남아있지 않아 같은 설명을 반복했습니다."}, {"category": "고객센터응대", "cluster": "장시간 대기", "count": 12, "urgent_count": 0, "example_text": "상담원 연결까지 40분 이상 대기했습니다. 응대 개선 요청드립니다. [NAME_4adbe5a7] / [PHONE_f23472df]."}, {"category": "명의도용/보안", "cluster": "미인지 회선개통", "count": 10, "urgent_count": 1, "example_text": "제 명의로 모르는 회선이 추가 개통된 것을 발견했습니다. 즉시 확인 부탁드립니다. [NAME_a0370be6], [PHONE_44c34be6]."}, {"category": "명의도용/보안", "cluster": "유심 무단재발급", "count": 9, "urgent_count": 2, "example_text": "본인인증 없이 유심이 재발급된 정황이 있습니다. IMSI [IMSI_6f4bc2e3] 확인 요청합니다."}, {"category": "개통/해지", "cluster": "명의변경 오류", "count": 9, "urgent_count": 1, "example_text": "명의변경 절차가 안내와 다르게 진행됐습니다. [PHONE_cc7b66a9]로 다시 연락 주세요."}, {"category": "명의도용/보안", "cluster": "계정 무단접근", "count": 9, "urgent_count": 2, "example_text": "타인이 제 계정으로 로그인한 이력이 있습니다. 보안 조치 부탁드립니다."}, {"category": "단말기불량", "cluster": "재부팅/발열", "count": 9, "urgent_count": 0, "example_text": "구매한 지 한 달도 안 된 단말기가 자꾸 재부팅됩니다. IMEI [IMEI_5a70b39a], 연락처 [PHONE_f289da69]."}, {"category": "단말기불량", "cluster": "배터리 이슈", "count": 7, "urgent_count": 1, "example_text": "배터리가 비정상적으로 빨리 닳습니다. [NAME_c55400b3] 고객이며 단말기 IMEI는 056413953767242입니다."}, {"category": "네트워크장애", "cluster": "5G 신호 불량", "count": 5, "urgent_count": 0, "example_text": "[NAME_cc41c717] [NAME_77bb4923]님 댁 주소 인근에서 어제 저녁부터 5G 신호가 전혀 안 잡힙니다. 연락처 [PHONE_b9ce9622]로 회신 부탁드립니다."}, {"category": "네트워크장애", "cluster": "LTE 전환 문제", "count": 5, "urgent_count": 0, "example_text": "실외에서도 LTE가 3G로 자꾸 전환됩니다. 가입자 [IMSI_ebe1148a] 회선입니다."}, {"category": "네트워크장애", "cluster": "통화 품질/끊김", "count": 4, "urgent_count": 0, "example_text": "강남 지역 기지국 장애로 통화 끊김이 반복됩니다. IMEI [IMEI_b0228f38] 단말기에서 계속 재현됩니다."}, {"category": "개통/해지", "cluster": "해지 후 재청구", "count": 3, "urgent_count": 0, "example_text": "해지 신청 후에도 요금이 계속 청구됩니다. 가입자식별번호 [IMSI_ff05f7d4] 입니다."}, {"category": "개통/해지", "cluster": "개통 지연", "count": 2, "urgent_count": 0, "example_text": "온라인으로 신청한 개통이 3일째 지연되고 있습니다. [NAME_4d693789] / [PHONE_dcb7679d] 확인 부탁드립니다."}], "daily_trend": [{"date": "2026-04-15", "count": 1}, {"date": "2026-04-17", "count": 4}, {"date": "2026-04-18", "count": 2}, {"date": "2026-04-19", "count": 3}, {"date": "2026-04-20", "count": 1}, {"date": "2026-04-21", "count": 1}, {"date": "2026-04-22", "count": 4}, {"date": "2026-04-24", "count": 1}, {"date": "2026-04-26", "count": 3}, {"date": "2026-04-27", "count": 1}, {"date": "2026-04-28", "count": 2}, {"date": "2026-04-29", "count": 2}, {"date": "2026-04-30", "count": 2}, {"date": "2026-05-01", "count": 1}, {"date": "2026-05-02", "count": 2}, {"date": "2026-05-03", "count": 1}, {"date": "2026-05-05", "count": 1}, {"date": "2026-05-06", "count": 2}, {"date": "2026-05-08", "count": 1}, {"date": "2026-05-09", "count": 1}, {"date": "2026-05-10", "count": 2}, {"date": "2026-05-12", "count": 2}, {"date": "2026-05-13", "count": 1}, {"date": "2026-05-14", "count": 4}, {"date": "2026-05-15", "count": 2}, {"date": "2026-05-17", "count": 1}, {"date": "2026-05-18", "count": 2}, {"date": "2026-05-19", "count": 2}, {"date": "2026-05-20", "count": 2}, {"date": "2026-05-21", "count": 3}, {"date": "2026-05-22", "count": 1}, {"date": "2026-05-23", "count": 1}, {"date": "2026-05-24", "count": 1}, {"date": "2026-05-25", "count": 2}, {"date": "2026-05-26", "count": 4}, {"date": "2026-05-27", "count": 1}, {"date": "2026-05-28", "count": 2}, {"date": "2026-05-29", "count": 1}, {"date": "2026-05-30", "count": 2}, {"date": "2026-06-01", "count": 3}, {"date": "2026-06-02", "count": 5}, {"date": "2026-06-03", "count": 3}, {"date": "2026-06-04", "count": 1}, {"date": "2026-06-06", "count": 2}, {"date": "2026-06-07", "count": 1}, {"date": "2026-06-08", "count": 1}, {"date": "2026-06-09", "count": 3}, {"date": "2026-06-10", "count": 1}, {"date": "2026-06-11", "count": 2}, {"date": "2026-06-12", "count": 2}, {"date": "2026-06-13", "count": 4}, {"date": "2026-06-14", "count": 1}, {"date": "2026-06-15", "count": 2}, {"date": "2026-06-16", "count": 1}, {"date": "2026-06-17", "count": 3}, {"date": "2026-06-18", "count": 2}, {"date": "2026-06-19", "count": 2}, {"date": "2026-06-20", "count": 1}, {"date": "2026-06-21", "count": 1}, {"date": "2026-06-22", "count": 1}, {"date": "2026-06-23", "count": 1}, {"date": "2026-06-24", "count": 1}, {"date": "2026-06-25", "count": 2}, {"date": "2026-06-26", "count": 1}, {"date": "2026-06-27", "count": 1}, {"date": "2026-06-28", "count": 3}, {"date": "2026-06-30", "count": 1}, {"date": "2026-07-01", "count": 2}, {"date": "2026-07-02", "count": 3}, {"date": "2026-07-03", "count": 2}, {"date": "2026-07-04", "count": 3}, {"date": "2026-07-05", "count": 3}, {"date": "2026-07-06", "count": 1}, {"date": "2026-07-07", "count": 1}, {"date": "2026-07-08", "count": 4}, {"date": "2026-07-09", "count": 1}, {"date": "2026-07-10", "count": 1}, {"date": "2026-07-11", "count": 2}, {"date": "2026-07-12", "count": 2}, {"date": "2026-07-13", "count": 1}], "weekly_trend": [{"week": "2026-W16", "count": 10}, {"week": "2026-W17", "count": 10}, {"week": "2026-W18", "count": 11}, {"week": "2026-W19", "count": 7}, {"week": "2026-W20", "count": 10}, {"week": "2026-W21", "count": 12}, {"week": "2026-W22", "count": 12}, {"week": "2026-W23", "count": 15}, {"week": "2026-W24", "count": 14}, {"week": "2026-W25", "count": 12}, {"week": "2026-W26", "count": 10}, {"week": "2026-W27", "count": 14}, {"week": "2026-W28", "count": 12}, {"week": "2026-W29", "count": 1}], "recent_tickets": [{"ticket_id": "TCK-00115", "created_at": "2026-07-13 22:00", "category": "명의도용/보안", "channel": "SNS", "severity": "보통", "status": "완료", "customer_id": "[CUSTID_ef833ba3]", "customer_name": "[NAME_1af25b74]", "phone": "[PHONE_9a58657d]", "imei": "[IMEI_3b973281]", "imsi": "[IMSI_a799fae2]", "complaint_text": "제 명의로 모르는 회선이 추가 개통된 것을 발견했습니다. 즉시 확인 부탁드립니다. [NAME_1af25b74], [PHONE_9a58657d].", "cluster": "미인지 회선개통"}, {"ticket_id": "TCK-00086", "created_at": "2026-07-12 13:00", "category": "단말기불량", "channel": "앱채팅", "severity": "보통", "status": "완료", "customer_id": "[CUSTID_344335d7]", "customer_name": "[NAME_fa615a0c]", "phone": "[PHONE_9df8c660]", "imei": "[IMEI_75eed908]", "imsi": "[IMSI_f923c413]", "complaint_text": "배터리가 비정상적으로 빨리 닳습니다. [NAME_fa615a0c] 고객이며 단말기 IMEI는 138999404389836입니다.", "cluster": "배터리 이슈"}, {"ticket_id": "TCK-00144", "created_at": "2026-07-12 09:00", "category": "고객센터응대", "channel": "이메일", "severity": "보통", "status": "처리중", "customer_id": "[CUSTID_f9145549]", "customer_name": "[NAME_d8dc9c23]", "phone": "[PHONE_91511c69]", "imei": "[IMEI_fe7a2884]", "imsi": "[IMSI_0929842c]", "complaint_text": "상담원의 설명이 안내마다 달라서 혼란스럽습니다. [PHONE_91511c69]로 콜백 요청합니다.", "cluster": "상담이력 미공유"}, {"ticket_id": "TCK-00126", "created_at": "2026-07-11 08:00", "category": "요금청구", "channel": "SNS", "severity": "보통", "status": "완료", "customer_id": "[CUSTID_5e08c90d]", "customer_name": "[NAME_2aaddbbb]", "phone": "[PHONE_6ebf58ea]", "imei": "[IMEI_210753df]", "imsi": "[IMSI_fc709611]", "complaint_text": "부가서비스를 해지했는데 계속 청구되고 있어요. 고객명 [NAME_2aaddbbb], 연락처 [PHONE_6ebf58ea].", "cluster": "과금 오류"}, {"ticket_id": "TCK-00110", "created_at": "2026-07-11 06:00", "category": "요금청구", "channel": "콜센터", "severity": "보통", "status": "완료", "customer_id": "[CUSTID_5463d0ff]", "customer_name": "[NAME_174666fc]", "phone": "[PHONE_e6639960]", "imei": "[IMEI_ab22f415]", "imsi": "[IMSI_d96800bc]", "complaint_text": "이번 달 요금이 평소보다 3만원 더 청구됐습니다. [NAME_174666fc]입니다, [PHONE_e6639960]로 확인 연락 주세요.", "cluster": "과금 오류"}, {"ticket_id": "TCK-00051", "created_at": "2026-07-10 13:00", "category": "데이터속도저하", "channel": "매장방문", "severity": "보통", "status": "완료", "customer_id": "[CUSTID_0495862d]", "customer_name": "[NAME_2992fbb3]", "phone": "[PHONE_5cbb196f]", "imei": "[IMEI_c1d4ed14]", "imsi": "[IMSI_d7aa9448]", "complaint_text": "매일 저녁 7~9시 사이에 데이터 속도가 급격히 느려집니다. IMSI [IMSI_d7aa9448] 회선입니다.", "cluster": "피크타임 속도저하"}, {"ticket_id": "TCK-00148", "created_at": "2026-07-09 18:00", "category": "개통/해지", "channel": "앱채팅", "severity": "낮음", "status": "접수", "customer_id": "[CUSTID_d4162760]", "customer_name": "[NAME_608934a9]", "phone": "[PHONE_f2f08a5e]", "imei": "[IMEI_9e96cdd9]", "imsi": "[IMSI_3e9d2103]", "complaint_text": "명의변경 절차가 안내와 다르게 진행됐습니다. [PHONE_f2f08a5e]로 다시 연락 주세요.", "cluster": "명의변경 오류"}, {"ticket_id": "TCK-00021", "created_at": "2026-07-08 23:00", "category": "데이터속도저하", "channel": "앱채팅", "severity": "보통", "status": "완료", "customer_id": "[CUSTID_0a4f114e]", "customer_name": "[NAME_1cbd2a9f]", "phone": "[PHONE_cad5cace]", "imei": "[IMEI_96586a77]", "imsi": "[IMSI_964e4b76]", "complaint_text": "테더링 시 속도 제한이 안내보다 빨리 걸립니다. [NAME_1cbd2a9f], [PHONE_cad5cace]로 연락 바랍니다.", "cluster": "피크타임 속도저하"}, {"ticket_id": "TCK-00071", "created_at": "2026-07-08 22:00", "category": "개통/해지", "channel": "매장방문", "severity": "높음", "status": "완료", "customer_id": "[CUSTID_f3a8598e]", "customer_name": "[NAME_04da28f4]", "phone": "[PHONE_7a7535ed]", "imei": "[IMEI_160b501e]", "imsi": "[IMSI_ff05f7d4]", "complaint_text": "해지 신청 후에도 요금이 계속 청구됩니다. 가입자식별번호 [IMSI_ff05f7d4] 입니다.", "cluster": "해지 후 재청구"}, {"ticket_id": "TCK-00092", "created_at": "2026-07-08 18:00", "category": "명의도용/보안", "channel": "매장방문", "severity": "낮음", "status": "완료", "customer_id": "[CUSTID_ee672f6c]", "customer_name": "[NAME_d326586c]", "phone": "[PHONE_761e0e4c]", "imei": "[IMEI_6f835aec]", "imsi": "[IMSI_5d77ce46]", "complaint_text": "본인인증 없이 유심이 재발급된 정황이 있습니다. IMSI [IMSI_5d77ce46] 확인 요청합니다.", "cluster": "유심 무단재발급"}, {"ticket_id": "TCK-00123", "created_at": "2026-07-08 02:00", "category": "고객센터응대", "channel": "매장방문", "severity": "긴급", "status": "완료", "customer_id": "[CUSTID_a0d076ed]", "customer_name": "[NAME_781a6a41]", "phone": "[PHONE_907a6809]", "imei": "[IMEI_9f01074d]", "imsi": "[IMSI_fd12fb64]", "complaint_text": "상담원의 설명이 안내마다 달라서 혼란스럽습니다. [PHONE_907a6809]로 콜백 요청합니다.", "cluster": "상담이력 미공유"}, {"ticket_id": "TCK-00112", "created_at": "2026-07-07 21:00", "category": "데이터속도저하", "channel": "콜센터", "severity": "높음", "status": "완료", "customer_id": "[CUSTID_9d67c8ff]", "customer_name": "[NAME_1195d4c4]", "phone": "[PHONE_8aa3bb47]", "imei": "[IMEI_ee044014]", "imsi": "[IMSI_19c767fa]", "complaint_text": "매일 저녁 7~9시 사이에 데이터 속도가 급격히 느려집니다. IMSI [IMSI_19c767fa] 회선입니다.", "cluster": "피크타임 속도저하"}, {"ticket_id": "TCK-00104", "created_at": "2026-07-06 17:00", "category": "명의도용/보안", "channel": "콜센터", "severity": "높음", "status": "접수", "customer_id": "[CUSTID_61e3b633]", "customer_name": "[NAME_e9d29d4a]", "phone": "[PHONE_f51e4fb4]", "imei": "[IMEI_d340d078]", "imsi": "[IMSI_c9141d0c]", "complaint_text": "본인인증 없이 유심이 재발급된 정황이 있습니다. IMSI [IMSI_c9141d0c] 확인 요청합니다.", "cluster": "유심 무단재발급"}, {"ticket_id": "TCK-00046", "created_at": "2026-07-05 21:00", "category": "개통/해지", "channel": "이메일", "severity": "보통", "status": "완료", "customer_id": "[CUSTID_4b4428cd]", "customer_name": "[NAME_ece98fb4]", "phone": "[PHONE_f06b340d]", "imei": "[IMEI_1ae44b02]", "imsi": "[IMSI_7f36d342]", "complaint_text": "온라인으로 신청한 개통이 3일째 지연되고 있습니다. [NAME_ece98fb4] / [PHONE_f06b340d] 확인 부탁드립니다.", "cluster": "개통 지연"}, {"ticket_id": "TCK-00093", "created_at": "2026-07-05 18:00", "category": "고객센터응대", "channel": "이메일", "severity": "높음", "status": "완료", "customer_id": "[CUSTID_666c18d0]", "customer_name": "[NAME_b5b5e449]", "phone": "[PHONE_b291e08d]", "imei": "[IMEI_66064a77]", "imsi": "[IMSI_27a7dd2e]", "complaint_text": "상담원 연결까지 40분 이상 대기했습니다. 응대 개선 요청드립니다. [NAME_b5b5e449] / [PHONE_b291e08d].", "cluster": "장시간 대기"}, {"ticket_id": "TCK-00130", "created_at": "2026-07-05 17:00", "category": "데이터속도저하", "channel": "앱채팅", "severity": "낮음", "status": "처리중", "customer_id": "[CUSTID_fca4fb17]", "customer_name": "[NAME_45690a89]", "phone": "[PHONE_c92a28de]", "imei": "[IMEI_a1d4143f]", "imsi": "[IMSI_3c25d766]", "complaint_text": "매일 저녁 7~9시 사이에 데이터 속도가 급격히 느려집니다. IMSI [IMSI_3c25d766] 회선입니다.", "cluster": "피크타임 속도저하"}, {"ticket_id": "TCK-00084", "created_at": "2026-07-04 20:00", "category": "명의도용/보안", "channel": "SNS", "severity": "보통", "status": "완료", "customer_id": "[CUSTID_18b6d771]", "customer_name": "[NAME_52eff745]", "phone": "[PHONE_cad7ef8a]", "imei": "[IMEI_8e72de76]", "imsi": "[IMSI_2876cb49]", "complaint_text": "제 명의로 모르는 회선이 추가 개통된 것을 발견했습니다. 즉시 확인 부탁드립니다. [NAME_52eff745], [PHONE_cad7ef8a].", "cluster": "미인지 회선개통"}, {"ticket_id": "TCK-00041", "created_at": "2026-07-04 04:00", "category": "요금청구", "channel": "콜센터", "severity": "보통", "status": "완료", "customer_id": "[CUSTID_adae05cc]", "customer_name": "[NAME_682817a5]", "phone": "[PHONE_6ca0fbc9]", "imei": "[IMEI_175a4510]", "imsi": "[IMSI_e8ce5e38]", "complaint_text": "부가서비스를 해지했는데 계속 청구되고 있어요. 고객명 [NAME_682817a5], 연락처 [PHONE_6ca0fbc9].", "cluster": "과금 오류"}, {"ticket_id": "TCK-00010", "created_at": "2026-07-04 02:00", "category": "고객센터응대", "channel": "SNS", "severity": "낮음", "status": "완료", "customer_id": "[CUSTID_dee1647c]", "customer_name": "[NAME_5fd2947d]", "phone": "[PHONE_2809b26c]", "imei": "[IMEI_ff6e00c1]", "imsi": "[IMSI_7878c83d]", "complaint_text": "상담원 연결까지 40분 이상 대기했습니다. 응대 개선 요청드립니다. [NAME_5fd2947d] / [PHONE_2809b26c].", "cluster": "장시간 대기"}, {"ticket_id": "TCK-00015", "created_at": "2026-07-03 20:00", "category": "데이터속도저하", "channel": "이메일", "severity": "보통", "status": "처리중", "customer_id": "[CUSTID_249f3bc9]", "customer_name": "[NAME_87fb0b42]", "phone": "[PHONE_ce8e7ef9]", "imei": "[IMEI_4e215d9a]", "imsi": "[IMSI_6b57dbd4]", "complaint_text": "매일 저녁 7~9시 사이에 데이터 속도가 급격히 느려집니다. IMSI [IMSI_6b57dbd4] 회선입니다.", "cluster": "피크타임 속도저하"}], "masking_sample": {"before": {"customer_name": "김예아", "phone": "010-4657-3286", "imei": "181960013389083", "imsi": "450063794026542", "complaint_text": "상담원 연결까지 40분 이상 대기했습니다. 응대 개선 요청드립니다. 김예아 / 010-4657-3286."}, "after": {"customer_name": "[NAME_4adbe5a7]", "phone": "[PHONE_f23472df]", "imei": "[IMEI_dd6fd733]", "imsi": "[IMSI_00ee2621]", "complaint_text": "상담원 연결까지 40분 이상 대기했습니다. 응대 개선 요청드립니다. [NAME_4adbe5a7] / [PHONE_f23472df]."}}};
+
+const CATEGORY_COLOR_VAR = {
+  "네트워크장애": "--cat-1",
+  "요금청구": "--cat-2",
+  "개통/해지": "--cat-3",
+  "단말기불량": "--cat-4",
+  "데이터속도저하": "--cat-5",
+  "고객센터응대": "--cat-6",
+  "명의도용/보안": "--cat-7",
+};
+const STATUS_ROLE = { "완료": "good", "처리중": "warning", "접수": "serious", "보류": "critical" };
+const STATUS_ORDER = ["접수", "처리중", "완료", "보류"];
+const SEVERITY_ROLE = { "낮음": "good", "보통": "warning", "높음": "serious", "긴급": "critical" };
+const SEVERITY_ORDER = ["낮음", "보통", "높음", "긴급"];
+const STATUS_LABEL = { good: "양호", warning: "주의", serious: "경고", critical: "심각" };
+
+function cssVar(name) { return getComputedStyle(document.querySelector(".viz-root")).getPropertyValue(name).trim(); }
+function statusColor(role) { return cssVar("--status-" + role); }
+function fmt(n) { return n.toLocaleString("ko-KR"); }
+function esc(s) { return String(s).replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c])); }
+function highlightPii(text) {
+  return esc(text).replace(/\[(NAME|PHONE|IMEI|IMSI|CUSTID)_[0-9a-f]+\]/g, m => `<span class="pii-token">${m}</span>`);
+}
+
+function renderKpis() {
+  const k = DATA.kpi;
+  const tiles = [
+    { label: "총 접수 건수", value: fmt(k.total_tickets) },
+    { label: "미해결", value: fmt(k.open_tickets) },
+    { label: "긴급 · 미해결", value: fmt(k.urgent_open), cls: k.urgent_open > 0 ? "accent-critical" : "" },
+    { label: "반복 문의 고객", value: fmt(k.repeat_customers) },
+    { label: "마스킹된 PII 항목", value: fmt(k.pii_fields_masked), cls: "accent-good" },
+    { label: "건당 평균 PII", value: k.avg_pii_per_ticket },
+  ];
+  document.getElementById("kpiRow").innerHTML = tiles.map(t => `
+    <div class="kpi-tile">
+      <div class="label">${t.label}</div>
+      <div class="value ${t.cls || ""}">${t.value}</div>
+    </div>`).join("");
+  document.getElementById("generatedAt").textContent = DATA.generated_at;
+}
+
+function renderCategoryChart() {
+  const rows = [...DATA.by_category].sort((a, b) => b.count - a.count);
+  const max = Math.max(...rows.map(r => r.count));
+  const el = document.getElementById("categoryChart");
+  el.innerHTML = rows.map(r => {
+    const colorVar = CATEGORY_COLOR_VAR[r.name] || "--cat-8";
+    const pct = (r.count / max * 100).toFixed(1);
+    return `
+      <div class="bar-row">
+        <span class="name">${esc(r.name)}</span>
+        <span class="bar-track"><span class="bar-fill" style="width:${pct}%; background:var(${colorVar});"></span></span>
+        <span class="count">${fmt(r.count)}</span>
+      </div>`;
+  }).join("");
+
+  document.getElementById("categoryLegend").innerHTML = rows.map(r => {
+    const colorVar = CATEGORY_COLOR_VAR[r.name] || "--cat-8";
+    return `<span class="item"><span class="swatch" style="background:var(${colorVar});"></span>${esc(r.name)}</span>`;
+  }).join("");
+
+  const total = rows.reduce((s, r) => s + r.count, 0);
+  const tableWrap = document.getElementById("categoryTableWrap");
+  tableWrap.innerHTML = `<table>
+    <thead><tr><th>카테고리</th><th>건수</th><th>비중</th></tr></thead>
+    <tbody>${rows.map(r => `<tr><td class="strong">${esc(r.name)}</td><td>${fmt(r.count)}</td><td>${(r.count / total * 100).toFixed(1)}%</td></tr>`).join("")}</tbody>
+  </table>`;
+  document.getElementById("catTableToggle").addEventListener("click", () => {
+    const visible = tableWrap.style.display !== "none";
+    tableWrap.style.display = visible ? "none" : "block";
+  });
+}
+
+function renderStatusStack() {
+  const rows = STATUS_ORDER.map(name => DATA.by_status.find(r => r.name === name) || { name, count: 0 });
+  const total = rows.reduce((s, r) => s + r.count, 0);
+  const stack = document.getElementById("statusStack");
+  stack.innerHTML = rows.map(r => {
+    const role = STATUS_ROLE[r.name];
+    const pct = total ? (r.count / total * 100) : 0;
+    return `<span class="status-seg" style="width:${pct}%; background:${statusColor(role)};" title="${r.name} ${r.count}건"></span>`;
+  }).join("");
+
+  document.getElementById("statusLegend").innerHTML = rows.map(r => {
+    const role = STATUS_ROLE[r.name];
+    return `<span class="item"><span class="dot" style="background:${statusColor(role)};"></span>${esc(r.name)} (${STATUS_LABEL[role]}) <b>${fmt(r.count)}</b></span>`;
+  }).join("");
+}
+
+function renderSeverityChart() {
+  const rows = SEVERITY_ORDER.map(name => DATA.by_severity.find(r => r.name === name) || { name, count: 0 });
+  const max = Math.max(...rows.map(r => r.count), 1);
+  const el = document.getElementById("severityChart");
+  el.innerHTML = rows.map(r => {
+    const role = SEVERITY_ROLE[r.name];
+    const pct = (r.count / max * 100).toFixed(1);
+    return `
+      <div class="bar-row">
+        <span class="name">${esc(r.name)}</span>
+        <span class="bar-track"><span class="bar-fill" style="width:${pct}%; background:${statusColor(role)};"></span></span>
+        <span class="count">${fmt(r.count)}</span>
+      </div>`;
+  }).join("");
+}
+
+function renderTrend() {
+  const rows = DATA.weekly_trend;
+  const svg = document.getElementById("trendChart");
+  const wrap = document.getElementById("trendWrap");
+  const W = 1000, H = 200, padL = 30, padR = 10, padT = 14, padB = 26;
+  const max = Math.max(...rows.map(r => r.count), 1);
+  const xStep = (W - padL - padR) / Math.max(rows.length - 1, 1);
+  const x = i => padL + i * xStep;
+  const y = v => padT + (H - padT - padB) * (1 - v / max);
+
+  const gridLines = [0, 0.5, 1].map(f => {
+    const yy = padT + (H - padT - padB) * (1 - f);
+    return `<line x1="${padL}" y1="${yy}" x2="${W - padR}" y2="${yy}" stroke="var(--grid)" stroke-width="1"/>`;
+  }).join("");
+
+  const points = rows.map((r, i) => `${x(i)},${y(r.count)}`).join(" ");
+  const lineColor = cssVar("--cat-1");
+
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.innerHTML = `
+    ${gridLines}
+    <line x1="${padL}" y1="${H - padB}" x2="${W - padR}" y2="${H - padB}" stroke="var(--baseline)" stroke-width="1"/>
+    <polyline points="${points}" fill="none" stroke="${lineColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    ${rows.map((r, i) => `<circle cx="${x(i)}" cy="${y(r.count)}" r="2.5" fill="${lineColor}" data-i="${i}" style="opacity:0"/>`).join("")}
+    <text x="${padL}" y="${H - 8}" font-size="10" fill="var(--text-muted)">${rows[0] ? rows[0].week : ""}</text>
+    <text x="${W - padR}" y="${H - 8}" font-size="10" fill="var(--text-muted)" text-anchor="end">${rows.length ? rows[rows.length - 1].week : ""}</text>
+    <line class="crosshair" x1="0" y1="${padT}" x2="0" y2="${H - padB}" stroke="var(--text-muted)" stroke-width="1" stroke-dasharray="3,3" style="opacity:0"/>
+  `;
+
+  let tooltip = wrap.querySelector(".lc-tooltip");
+  if (!tooltip) {
+    tooltip = document.createElement("div");
+    tooltip.className = "lc-tooltip";
+    tooltip.style.display = "none";
+    wrap.appendChild(tooltip);
+  }
+  const crosshair = svg.querySelector(".crosshair");
+
+  svg.addEventListener("mousemove", (e) => {
+    const rect = svg.getBoundingClientRect();
+    const relX = (e.clientX - rect.left) / rect.width * W;
+    let i = Math.round((relX - padL) / xStep);
+    i = Math.max(0, Math.min(rows.length - 1, i));
+    const r = rows[i];
+    if (!r) return;
+    crosshair.setAttribute("x1", x(i));
+    crosshair.setAttribute("x2", x(i));
+    crosshair.style.opacity = 1;
+    tooltip.style.display = "block";
+    tooltip.style.left = (x(i) / W * rect.width) + "px";
+    tooltip.style.top = (y(r.count) / H * rect.height) + "px";
+    tooltip.innerHTML = `<b>${r.week}</b> · ${fmt(r.count)}건`;
+  });
+  svg.addEventListener("mouseleave", () => {
+    tooltip.style.display = "none";
+    crosshair.style.opacity = 0;
+  });
+}
+
+function renderClusterTable() {
+  const rows = DATA.clusters.slice(0, 10);
+  const table = document.getElementById("clusterTable");
+  table.innerHTML = `
+    <thead><tr><th>카테고리</th><th>세부 군집</th><th>건수</th><th>긴급</th><th>대표 사례 (마스킹됨)</th></tr></thead>
+    <tbody>${rows.map(r => `
+      <tr>
+        <td class="strong">${esc(r.category)}</td>
+        <td>${esc(r.cluster)}</td>
+        <td>${fmt(r.count)}</td>
+        <td>${r.urgent_count > 0 ? `<span class="pill" style="background:color-mix(in srgb, var(--status-critical) 16%, transparent); color:var(--status-critical);"><span class="dot" style="background:var(--status-critical);"></span>${r.urgent_count}</span>` : "-"}</td>
+        <td class="mono">${highlightPii(r.example_text)}</td>
+      </tr>`).join("")}</tbody>
+  `;
+}
+
+function renderMaskingSample() {
+  const s = DATA.masking_sample;
+  const fieldLabels = { customer_name: "고객명", phone: "연락처", imei: "IMEI", imsi: "IMSI", complaint_text: "민원 내용" };
+  const renderBox = (obj, mask) => Object.entries(fieldLabels).map(([k, label]) => `
+    <div class="field"><span class="k">${label}</span>${mask ? highlightPii(obj[k]) : esc(obj[k])}</div>
+  `).join("");
+  document.getElementById("maskBefore").innerHTML = renderBox(s.before, false);
+  document.getElementById("maskAfter").innerHTML = renderBox(s.after, true);
+}
+
+function renderRecentTable() {
+  const rows = DATA.recent_tickets;
+  const table = document.getElementById("recentTable");
+  table.innerHTML = `
+    <thead><tr><th>접수일시</th><th>티켓ID</th><th>카테고리</th><th>군집</th><th>채널</th><th>심각도</th><th>상태</th><th>고객(마스킹)</th></tr></thead>
+    <tbody>${rows.map(r => {
+      const sRole = STATUS_ROLE[r.status];
+      const vRole = SEVERITY_ROLE[r.severity];
+      return `<tr>
+        <td>${esc(r.created_at)}</td>
+        <td class="mono">${esc(r.ticket_id)}</td>
+        <td class="strong">${esc(r.category)}</td>
+        <td>${esc(r.cluster)}</td>
+        <td>${esc(r.channel)}</td>
+        <td><span class="pill" style="background:color-mix(in srgb, ${statusColor(vRole)} 16%, transparent); color:${statusColor(vRole)};"><span class="dot" style="background:${statusColor(vRole)};"></span>${esc(r.severity)}</span></td>
+        <td><span class="pill" style="background:color-mix(in srgb, ${statusColor(sRole)} 16%, transparent); color:${statusColor(sRole)};"><span class="dot" style="background:${statusColor(sRole)};"></span>${esc(r.status)}</span></td>
+        <td class="mono">${highlightPii(r.customer_name)}</td>
+      </tr>`;
+    }).join("")}</tbody>
+  `;
+}
+
+function initTheme() {
+  const btn = document.getElementById("themeToggle");
+  const root = document.documentElement;
+  btn.addEventListener("click", () => {
+    const isDark = root.getAttribute("data-theme") === "dark";
+    root.setAttribute("data-theme", isDark ? "light" : "dark");
+    btn.textContent = isDark ? "다크 모드" : "라이트 모드";
+  });
+}
+
+renderKpis();
+renderCategoryChart();
+renderStatusStack();
+renderSeverityChart();
+renderTrend();
+renderClusterTable();
+renderMaskingSample();
+renderRecentTable();
+initTheme();
+</script>

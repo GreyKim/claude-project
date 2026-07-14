@@ -1,0 +1,16 @@
+{
+  "before": {
+    "customer_name": "김예아",
+    "phone": "010-4657-3286",
+    "imei": "181960013389083",
+    "imsi": "450063794026542",
+    "complaint_text": "상담원 연결까지 40분 이상 대기했습니다. 응대 개선 요청드립니다. 김예아 / 010-4657-3286."
+  },
+  "after": {
+    "customer_name": "[NAME_4adbe5a7]",
+    "phone": "[PHONE_f23472df]",
+    "imei": "[IMEI_dd6fd733]",
+    "imsi": "[IMSI_00ee2621]",
+    "complaint_text": "상담원 연결까지 40분 이상 대기했습니다. 응대 개선 요청드립니다. [NAME_4adbe5a7] / [PHONE_f23472df]."
+  }
+}
